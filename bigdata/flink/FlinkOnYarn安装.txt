@@ -1,0 +1,23 @@
+------------------------------------------------------------------------------------
+            Flink on YARN安装
+------------------------------------------------------------------------------------
+1. 准备安装包
+    本文以Flink-1.11.1版本安装为例来进行阐述。
+    从Flink官网(https://archive.apache.org/dist/flink/flink-1.11.1/)下载flink-1.11.1-bin-scala_2.11.tgz, 上传到目标Linux服务器，创建安装目录：
+    mkdir -p /opt/ncdw
+    把flink-1.11.1-bin-scala_2.11.tgz放到/opt/ncdw目录下，解压：
+    tar zxvf flink-1.11.1-bin-scala_2.11.tgz 
+    cd flink-1.11.1/
+
+2. 在Hadoop YARN节点上配置Flink
+    不要单独搭建Flink集群，采用Hadoop YARN来运行Flink任务比较好，在YARN上还可以运行Spark任务、Hadoop MapReduce任务。
+    因此，把flink-1.11.1部署到Hadoop YARN集群的ResourceManager节点上即可。
+    配置Hadoop YARN相关的环境变量，好让flink工具能够找到Hadoop YARN集群而提交任务。
+    vi ~/.profile，添加环境变量：
+    主要修改下面的路径:
+    export HADOOP_PREFIX=/opt/ncdw/hadoop-2.10.0
+    export HADOOP_HOME=$HADOOP_PREFIX
+    export HADOOP_YARN_HOME=$HADOOP_PREFIX
+    export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+    export HADOOP_CLASSPATH=`hadoop classpath`
+    export PATH=$PATH:$HADOOP_HOME/bin
