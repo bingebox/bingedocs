@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<configuration>
+
+<!-- Site specific YARN configuration properties -->
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value>192.168.2.11</value>
+  </property>    
+  
+  <property>
+    <name>hadoop.home</name>
+    <value>/home/honya/ncdata/hadoop-2.10.0</value>
+  </property>
+
+  <property>
+    <name>yarn.acl.enable</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <name>yarn.admin.acl</name>
+    <value>*</value>
+  </property>
+
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.address</name>
+    <value>${yarn.resourcemanager.hostname}:8032</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.scheduler.address</name>
+    <value>${yarn.resourcemanager.hostname}:8030</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value>${yarn.resourcemanager.hostname}:8031</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.admin.address</name>
+    <value>${yarn.resourcemanager.hostname}:8033</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value>${yarn.resourcemanager.hostname}:8088</value>
+  </property>
+
+  <property>
+    <description>A comma separated list of services where service name should only
+      contain a-zA-Z0-9_ and can not start with numbers</description>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+
+  <property>
+    <description>The class to use as the resource scheduler.</description>
+    <name>yarn.resourcemanager.scheduler.class</name>
+	<!-- 
+    <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
+	-->
+	<value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+  </property>
+
+  <property>
+    <description>The minimum allocation for every container request at the RM
+    in MBs. Memory requests lower than this will be set to the value of this
+    property. Additionally, a node manager that is configured to have less memory
+    than this value will be shut down by the resource manager.</description>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>1024</value>
+  </property>
+
+  <property>
+    <description>The maximum allocation for every container request at the RM
+    in MBs. Memory requests higher than this will throw an
+    InvalidResourceRequestException.</description>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>8192</value>
+  </property>
+
+  <property>
+    <description>The minimum allocation for every container request at the RM
+    in terms of virtual CPU cores. Requests lower than this will be set to the
+    value of this property. Additionally, a node manager that is configured to
+    have fewer virtual cores than this value will be shut down by the resource
+    manager.</description>
+    <name>yarn.scheduler.minimum-allocation-vcores</name>
+    <value>1</value>
+  </property>
+
+  <property>
+    <description>The maximum allocation for every container request at the RM
+    in terms of virtual CPU cores. Requests higher than this will throw an
+    InvalidResourceRequestException.</description>
+    <name>yarn.scheduler.maximum-allocation-vcores</name>
+    <value>4</value>
+  </property>
+
+  <property>
+    <description>Amount of physical memory, in MB, that can be allocated 
+    for containers. If set to -1 and
+    yarn.nodemanager.resource.detect-hardware-capabilities is true, it is
+    automatically calculated(in case of Windows and Linux).
+    In other cases, the default is 8192MB.
+    </description>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>24576</value>
+  </property>
+
+  <property>
+    <description>Number of vcores that can be allocated
+    for containers. This is used by the RM scheduler when allocating
+    resources for containers. This is not used to limit the number of
+    CPUs used by YARN containers. If it is set to -1 and
+    yarn.nodemanager.resource.detect-hardware-capabilities is true, it is
+    automatically determined from the hardware in case of Windows and Linux.
+    In other cases, number of vcores is 8 by default.</description>
+    <name>yarn.nodemanager.resource.cpu-vcores</name>
+    <value>30</value>
+  </property>
+
+  <property>
+    <description>Ratio between virtual memory to physical memory when
+    setting memory limits for containers. Container allocations are
+    expressed in terms of physical memory, and virtual memory usage
+    is allowed to exceed this allocation by this ratio.
+    </description>
+    <name>yarn.nodemanager.vmem-pmem-ratio</name>
+    <value>2.1</value>
+  </property>
+
+  <property>
+    <name>hadoop.tmp.dir</name>
+    <value>${hadoop.home}/tmp</value>
+  </property>
+
+  <property>
+    <name>yarn.log.dir</name>
+    <value>${hadoop.home}/logs/yarn</value>
+  </property>
+
+  <property>
+    <description>List of directories to store localized files in. An 
+      application's localized file directory will be found in:
+      ${yarn.nodemanager.local-dirs}/usercache/${user}/appcache/application_${appid}.
+      Individual containers' work directories, called container_${contid}, will
+      be subdirectories of this.
+   </description>
+    <name>yarn.nodemanager.local-dirs</name>
+    <value>${hadoop.tmp.dir}/yarn/nm-local-dir</value>
+  </property>
+
+  <property>
+    <description>
+      Where to store container logs. An application's localized log directory
+      will be found in ${yarn.nodemanager.log-dirs}/application_${appid}.
+      Individual containers' log directories will be below this, in directories 
+      named container_{$contid}. Each container directory will contain the files
+      stderr, stdin, and syslog generated by that container.
+    </description>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value>${yarn.log.dir}/userlogs</value>
+  </property>
+
+  <property>
+    <description>Time in seconds to retain user logs. Only applicable if
+    log aggregation is disabled
+    </description>
+    <name>yarn.nodemanager.log.retain-seconds</name>
+    <value>10800</value>
+  </property>
+
+  <property>
+    <description>Whether physical memory limits will be enforced for
+    containers.</description>
+    <name>yarn.nodemanager.pmem-check-enabled</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <description>Whether virtual memory limits will be enforced for
+    containers.</description>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+
+</configuration>

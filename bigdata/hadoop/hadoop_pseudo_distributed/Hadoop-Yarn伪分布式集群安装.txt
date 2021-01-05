@@ -1,0 +1,220 @@
+            Hadoop-Yarn伪分布式集群安装
+
+1. 准备安装包
+    所谓伪分布式集群, 就是在一台Linux服务器上部署一个Hadoop-Yarn集群。
+    从Hadoop官网下载安装包，当前使用的是hadoop-2.10.0，
+    下载地址：https://archive.apache.org/dist/hadoop/common/hadoop-2.10.0/, 下载得到：hadoop-2.10.0.tar.gz。
+    上传到目标Linux服务器，创建安装目录：
+    mkdir /opt/ncdw
+    把hadoop-2.10.0.tar.gz放到/opt/ncdw目录下，解压：
+    tar zxvf hadoop-2.10.0.tar.gz
+    cd hadoop-2.10.0/
+    创建需要的子目录：
+    mkdir dfs
+    mkdir logs
+    mkdir tmp 
+
+2. 配置
+    所有配置文件和环境脚本文件到放到etc/hadoop/目录下, 进入配置目录:
+    cd hadoop-2.10.0/etc/hadoop/
+    这里配置文件很多，但只要修改4个.xml配置文件和2个.sh脚本文件：
+    core-site.xml
+    hdfs-site.xml
+    mapred-site.xml
+    yarn-site.xml
+    hadoop-env.sh
+    yarn-env.sh
+    因为默认的模板文件基本是空的，需要我们根据官网文档和实际安装情况来配置，为了降低部署难度，特提供测试环境使用的6个文件，我们在线上部署时，在提供的文件基础上进行修改就比较简单了。
+
+2.1 core-site.xml
+    主要修改两项：
+    安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
+    <property>
+        <name>hadoop.home</name>
+        <value>/home/honya/ncdata/hadoop-2.10.0</value>
+    </property>
+
+    修改hdfs的IP和端口。
+    <property>
+        <name>fs.defaultFS</name>
+        <value>hdfs://192.168.2.11:9000</value>
+    </property>
+
+2.2 hdfs-site.xml
+    主要修改两项：
+    安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
+    <property>
+        <name>hadoop.home</name>
+        <value>/home/honya/ncdata/hadoop-2.10.0</value>
+    </property>
+
+    修改节点IP:
+    <property>
+        <name>namenode.ip</name>
+        <value>192.168.2.11</value>
+    </property>
+
+2.3 mapred-site.xml
+    主要修改IP:
+    <property>                 
+        <name>master.ip</name> 
+        <value>192.168.2.11</value>     
+    </property>
+
+2.4 yarn-site.xml
+    修改节点IP:
+    <property>
+        <name>yarn.resourcemanager.hostname</name>
+        <value>192.168.2.11</value>
+    </property>
+
+    安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
+    <property>
+        <name>hadoop.home</name>
+        <value>/home/honya/ncdata/hadoop-2.10.0</value>
+    </property>
+
+    下面5项的端口号，如果有被其它程序服务所占用，就修改一下，不然不要改动：
+    <property>
+        <name>yarn.resourcemanager.address</name>
+        <value>${yarn.resourcemanager.hostname}:8032</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.scheduler.address</name>
+        <value>${yarn.resourcemanager.hostname}:8030</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.resource-tracker.address</name>
+        <value>${yarn.resourcemanager.hostname}:8031</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.admin.address</name>
+        <value>${yarn.resourcemanager.hostname}:8033</value>
+    </property>
+
+    <property>
+        <name>yarn.resourcemanager.webapp.address</name>
+        <value>${yarn.resourcemanager.hostname}:8088</value>
+    </property>
+
+    任务资源调度策略：1) CapacityScheduler: 按队列调度；2) FairScheduler: 平均分配。
+    很重要的配置，一定要理解原理。
+    <property>
+        <description>The class to use as the resource scheduler.</description>
+        <name>yarn.resourcemanager.scheduler.class</name>
+        <!--
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
+        -->
+        <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>
+    </property>
+
+    分配给AM单个容器可申请的最小内存: MB
+    <property>
+        <description>The minimum allocation for every container request at the RM
+        in MBs. Memory requests lower than this will be set to the value of this
+        property. Additionally, a node manager that is configured to have less memory
+        than this value will be shut down by the resource manager.</description>
+        <name>yarn.scheduler.minimum-allocation-mb</name>
+        <value>1024</value>
+    </property>
+
+    分配给AM单个容器可申请的最大内存: MB
+    <property>
+        <description>The maximum allocation for every container request at the RM
+        in MBs. Memory requests higher than this will throw an
+        InvalidResourceRequestException.</description>
+        <name>yarn.scheduler.maximum-allocation-mb</name>
+        <value>8192</value>
+    </property>
+
+    分配给AM单个容器可申请的最小虚拟的CPU个数: 
+    <property>
+        <description>The minimum allocation for every container request at the RM
+        in terms of virtual CPU cores. Requests lower than this will be set to the
+        value of this property. Additionally, a node manager that is configured to
+        have fewer virtual cores than this value will be shut down by the resource
+        manager.</description>
+        <name>yarn.scheduler.minimum-allocation-vcores</name>
+        <value>1</value>
+    </property>
+
+    分配给AM单个容器可申请的最大虚拟的CPU个数: 
+    <property>
+        <description>The maximum allocation for every container request at the RM
+        in terms of virtual CPU cores. Requests higher than this will throw an
+        InvalidResourceRequestException.</description>
+        <name>yarn.scheduler.maximum-allocation-vcores</name>
+        <value>4</value>
+    </property>
+
+    NodeManager节点最大可用内存, 根据实际机器上的物理内存进行配置：
+    NodeManager节点最大Container数量: 
+        max(Container) = yarn.nodemanager.resource.memory-mb / yarn.scheduler.maximum-allocation-mb
+    <property>
+        <description>Amount of physical memory, in MB, that can be allocated
+        for containers. If set to -1 and
+        yarn.nodemanager.resource.detect-hardware-capabilities is true, it is
+        automatically calculated(in case of Windows and Linux).
+        In other cases, the default is 8192MB.
+        </description>
+        <name>yarn.nodemanager.resource.memory-mb</name>
+        <value>24576</value>
+    </property>
+
+    节点服务器上yarn可以使用的虚拟的CPU个数，默认是8，推荐配置与核心个数相同。
+    如果节点CPU的核心个数不足8个，需要调小这个值，yarn不会智能的去检测物理核数。如果机器性能较好，可以配置为物理核数的2倍。
+    <property>
+        <description>Number of vcores that can be allocated
+        for containers. This is used by the RM scheduler when allocating
+        resources for containers. This is not used to limit the number of
+        CPUs used by YARN containers. If it is set to -1 and
+        yarn.nodemanager.resource.detect-hardware-capabilities is true, it is
+        automatically determined from the hardware in case of Windows and Linux.
+        In other cases, number of vcores is 8 by default.</description>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>30</value>
+    </property>
+
+2.5 hadoop-env.sh
+    主要把以下配置项的路径，按实际情况进行配置：
+    HOME=/home/honya
+    export JAVA_HOME=$HOME/ncdata/jdk1.8.0_144
+    export HADOOP_PREFIX=$HOME/ncdata/hadoop-2.10.0
+    export HADOOP_HOME=$HADOOP_PREFIX
+    export HADOOP_YARN_HOME=$HADOOP_PREFIX
+    export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+    export HADOOP_LOG_DIR=${HADOOP_HOME}/logs/hdfs
+
+2.6 yarn-env.sh
+    主要把以下配置项的路径，按实际情况进行配置：
+    HOME=/home/honya
+    export JAVA_HOME=$HOME/ncdata/jdk1.8.0_144
+    export HADOOP_PREFIX=$HOME/ncdata/hadoop-2.10.0
+    export HADOOP_HOME=$HADOOP_PREFIX
+    export HADOOP_YARN_HOME=$HADOOP_PREFIX
+    export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
+    HADOOP_YARN_USER=honya
+    YARN_CONF_DIR=$HADOOP_YARN_HOME/etc/hadoop
+    YARN_LOG_DIR="$HADOOP_YARN_HOME/logs/yarn"
+
+3. 设置ssh免密登录
+    ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+    cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+    chmod 0600 ~/.ssh/authorized_keys
+
+4. 格式化hdfs
+    bin/hdfs namenode -format
+
+5. 启动hadoop NameNode daemon和DataNode daemon
+    sbin/start-dfs.sh
+    启动成功后，可以打开管理系统：http://192.168.2.11:50070/
+    如果要关闭服务，则执行：sbin/stop-dfs.sh
+
+6. 启动ResourceManager daemon 和 NodeManager daemon
+    sbin/start-yarn.sh
+    启动成功后，可以打开管理系统：http://192.168.2.11:8088/
+    如果要关闭服务，则执行：sbin/stop-yarn.sh
+    
