@@ -21,8 +21,8 @@
     export HADOOP_HOME=$HADOOP_PREFIX
     export HADOOP_YARN_HOME=$HADOOP_PREFIX
     export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
-    export HADOOP_CLASSPATH=`hadoop classpath`
     export PATH=$PATH:$HADOOP_HOME/bin
+    export HADOOP_CLASSPATH=`hadoop classpath`
 
     3) 把spark安装路径设置到linux环境变量里去。 
     vi ~/.profile

@@ -11,13 +11,28 @@
 
 2. 在Hadoop YARN节点上配置Flink
     不要单独搭建Flink集群，采用Hadoop YARN来运行Flink任务比较好，在YARN上还可以运行Spark任务、Hadoop MapReduce任务。
-    因此，把flink-1.11.1部署到Hadoop YARN集群的ResourceManager节点上即可。
-    配置Hadoop YARN相关的环境变量，好让flink工具能够找到Hadoop YARN集群而提交任务。
+    1) 把flink-1.11.1部署到Hadoop YARN集群的某个节点上, 则相关配置和环境变量都已经配置好了;
+
+    2) 或者在一个单独节点部署Flink，但在这个节点上还要部署Hadoop Yarn环境, 可以不运行Hadoop Yarn, 其实就是有路径配置即可。
+    配置Hadoop YARN相关的环境变量，好让Flink工具能够找到Hadoop YARN集群而提交任务。
     vi ~/.profile，添加环境变量：
     主要修改下面的路径:
     export HADOOP_PREFIX=/opt/ncdw/hadoop-2.10.0
     export HADOOP_HOME=$HADOOP_PREFIX
     export HADOOP_YARN_HOME=$HADOOP_PREFIX
     export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
-    export HADOOP_CLASSPATH=`hadoop classpath`
     export PATH=$PATH:$HADOOP_HOME/bin
+    export HADOOP_CLASSPATH=`hadoop classpath`
+
+    3) 把Flink安装路径设置到linux环境变量里去。 
+    vi ~/.profile
+    添加：
+    FLINK_HOME=/opt/ncdw/flink-1.11.1
+    追加：
+    export PATH=$JAVA_HOME/bin:$PATH:$HADOOP_HOME/bin:$SPARK_HOME/bin:$FLINK_HOME/bin
+    生效:
+    . ~/.profile
+
+3. 发布 Flink Job on YARN
+    采用flink命令来提交任务，这里不累述。
+    
