@@ -9,9 +9,11 @@
     tar zxvf spark-2.4.5-bin-hadoop2.7.tgz
     cd spark-2.4.5-bin-hadoop2.7/
 
-2. Running Spark on Hadoop YARN
+2. 安装Spark on Hadoop YARN
     不要单独搭建Spark集群，采用Hadoop YARN来运行Spark任务比较好，在YARN上还可以运行Flink任务、Hadoop MapReduce任务。
-    因此，把spark-2.4.5-bin-hadoop2.7部署到Hadoop YARN集群的ResourceManager节点上即可。
+    1) 把spark-2.4.5-bin-hadoop2.7部署到Hadoop YARN集群的某个节点上, 则相关配置和环境变量都已经配置好了;
+
+    2) 或者在一个单独节点部署Spark，但在这个节点上还要部署Hadoop Yarn环境, 可以不运行Hadoop Yarn, 其实就是有路径配置即可。
     配置Hadoop YARN相关的环境变量，好让spark-submit工具能够找到Hadoop YARN集群而提交Spark任务。
     vi ~/.profile，添加环境变量：
     主要修改下面的路径:
@@ -22,8 +24,17 @@
     export HADOOP_CLASSPATH=`hadoop classpath`
     export PATH=$PATH:$HADOOP_HOME/bin
 
-3. Launching Spark on YARN
-    发布一个Spark Job主要采用./bin/spark-submit脚本工具来提交。
-    ./bin/spark-submit --class path.to.your.Class --master yarn --deploy-mode cluster [options] <app jar> [app options]
+    3) 把spark安装路径设置到linux环境变量里去。 
+    vi ~/.profile
+    添加：
+    SPARK_HOME=/opt/ncdw/spark-2.4.5-bin-hadoop2.7
+    追加：
+    export PATH=$JAVA_HOME/bin:$PATH:$HADOOP_HOME/bin:$SPARK_HOME/bin:$FLINK_HOME/bin
+    生效:
+    . ~/.profile
+
+3. 发布 Spark Job on YARN
+    发布一个Spark Job主要采用spark-submit脚本工具来提交。
+    spark-submit --class path.to.your.Class --master yarn --deploy-mode cluster [options] <app jar> [app options]
     具体看相关实际项目，这里不细述。
     
