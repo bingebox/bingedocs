@@ -76,10 +76,11 @@
 3. 配置
     所有配置文件和环境脚本文件到放到etc/hadoop/目录下, 进入配置目录:
         cd hadoop-2.10.0/etc/hadoop/
-    这里配置文件很多，但只要修改3个.xml配置文件和2个.sh脚本文件, 以及slaves：
+    这里配置文件很多，但只要修改4个.xml配置文件和2个.sh脚本文件, 以及slaves：
         core-site.xml
         hdfs-site.xml
         yarn-site.xml
+        capacity-scheduler.xml
         slaves
         hadoop-env.sh
         yarn-env.sh
@@ -286,15 +287,32 @@
     <name>yarn.nodemanager.log-dirs</name>
     <value>${yarn.log.dir}/userlogs</value>
   </property>
+  
+3.6 capacity-scheduler.xml
+    <property>
+        <name>yarn.scheduler.capacity.resource-calculator</name>
+        <!--
+        <value>org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator</value>
+        -->
+        <value>org.apache.hadoop.yarn.util.resource.DominantResourceCalculator</value>
+        <description>
+            The ResourceCalculator implementation to be used to compare 
+            Resources in the scheduler.
+            The default i.e. DefaultResourceCalculator only uses Memory while
+            DominantResourceCalculator uses dominant-resource to compare 
+            multi-dimensional resources such as Memory, CPU etc.
+        </description>
+    </property>
+    注释里的英文已经说明白了，如果采用DefaultResourceCalculator则仅仅计算内存，只有DominantResourceCalculator才同时计算内存和CPU。
 
-3.6 slaves: 从节点域名配置
+3.7 slaves: 从节点域名配置
     hadoop1
     hadoop3
     hadoop4
     hadoop2 (如果在master节点上同时部署slave的话)
 
-3.7 配置文件分发
-    一旦这6份配置文件都修改妥当，则把它们分发到所有节点服务器的HADOOP_CONF_DIR目录里，所有节点应当目录规划一致。
+3.8 配置文件分发
+    一旦这7份配置文件都修改妥当，则把它们分发到所有节点服务器的HADOOP_CONF_DIR目录里，所有节点应当目录规划一致。
 
 4. 运行集群的系统用户账号
     通常，推荐HDFS和YARN集群运行在两个不同的账号下，例如：HDFS采用hdfs用户，YARN采用yarn用户。

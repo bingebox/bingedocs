@@ -156,6 +156,23 @@
   </property>
 
   <property>
+    <description>
+    Number of vcores that can be allocated
+    for containers. This is used by the RM scheduler when allocating
+    resources for containers. This is not used to limit the number of
+    CPUs used by YARN containers. If it is set to -1 and
+    yarn.nodemanager.resource.detect-hardware-capabilities is true, it is
+    automatically determined from the hardware in case of Windows and Linux.
+    In other cases, number of vcores is 8 by default.
+    节点服务器上yarn可以使用的虚拟的CPU个数，默认是8，推荐配置与核心个数相同。
+    如果节点CPU的核心个数不足8个，需要调小这个值，yarn不会智能的去检测物理核数。
+    如果机器性能较好，可以配置为物理核数的2倍。
+    </description>
+    <name>yarn.nodemanager.resource.cpu-vcores</name>
+    <value>32</value>
+  </property>
+
+  <property>
     <name>hadoop.tmp.dir</name>
     <value>${hadoop.home}/tmp</value>
   </property>
@@ -206,17 +223,6 @@
     <description>Whether virtual memory limits will be enforced for containers.</description>
     <name>yarn.nodemanager.vmem-check-enabled</name>
     <value>false</value>
-  </property>
-
-  <property>
-    <description>The maximum allocation for every container request at the RM
-    in terms of virtual CPU cores. Requests higher than this will throw an
-    InvalidResourceRequestException.
-    节点服务器上yarn可以使用的虚拟的CPU个数，默认是8，推荐配置与核心个数相同。
-    如果节点CPU的核心个数不足8个，需要调小这个值，yarn不会智能的去检测物理核数。如果机器性能较好，可以配置为物理核数的2倍。
-    </description>
-    <name>yarn.scheduler.maximum-allocation-vcores</name>
-    <value>8</value>
   </property>
 
 </configuration>
