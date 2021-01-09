@@ -1,0 +1,136 @@
+---------------------------------------------------------------------------------------
+	hbase-2.1.0 or hbase-2.0.0 install
+---------------------------------------------------------------------------------------
+note: 由于最新版本phoenix5.0.0支持的最高版本是hbase-2.0.x，所以实际安装hbase-2.0.0吧
+note: 不能安装hbase-2.0.1, hbase-2.0.2，不然版本不兼容，建立索引之后upsert操作错误，自动更新索引表失败.
+
+1. Distributed Cluster Demo Architecture
+分布式集群架构:
+	Master:  master
+	Backup Master: slaver1
+	Zookeeper: master, slaver1, slaver2
+	RegionServer: slaver1, slaver2, slaver3
+
+2. Procedure: Configure Passwordless SSH Access
+配置免密码的SSH登录：
+我们把hbase安装到hdfs账号下，hadoop安装时已经搞定了.
+
+3. Procedure: Prepare master node
+配置master节点：
+3.1 vi conf/regionservers
+slaver1
+slaver2
+slaver3
+
+3.2 vi conf/backup-masters
+slaver1
+
+3.3 vi conf/hbase-site.xml
+<configuration>
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value>master,slaver1,slaver2</value>
+  </property>
+
+  <property>
+	<name>hbase.zookeeper.property.clientPort</name>
+	<value>2181</value>
+  </property>
+ 
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://master:9000/hbase</value>
+  </property>
+ 
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+    <description>The mode the cluster will be in. Possible values are
+      false: standalone and pseudo-distributed setups with managed ZooKeeper
+      true: fully-distributed with unmanaged ZooKeeper Quorum (see hbase-env.sh)
+    </description>
+  </property>
+
+  <property>
+	<name>hbase.master</name>
+	<value>master</value>
+  </property>
+
+  <property>
+    <name>hbase.unsafe.stream.capability.enforce</name>
+    <value>false</value>
+  </property>
+
+ <!-- 注意：如果是自己单独安装zookeeper，下面配置应该不用设置 -->
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/home/honya/zookeeper-3.4.12/data</value>
+    <description>Property from ZooKeeper config zoo.cfg. The directory where the snapshot is stored. </description>
+  </property>
+</configuration>
+
+3.4 vi conf/hbase-env.sh
+export JAVA_HOME=/opt/jdk1.8.0_144/
+export HBASE_MANAGES_ZK=flase
+
+4. Procedure: Prepare region server node
+4.1 节点slaver1, slaver2, slaver3都安装好相同版本hbase2.0.0
+
+4.2 把节点master上conf里的配置都copy到region server节点去
+
+5. Procedure: Start and Test Your Cluster
+5.1 Start the cluster: 启动集群，测试之
+bin/start-hbase.sh
+
+5.2 Verify that the processes are running: 检查进程
+jps
+
+5.3 command:
+bin/hbase shell
+
+5.4 web UI:
+HBase Master: 
+	http://master:16010/master-status
+HBase Master Backup:
+	http://slaver1:16010/master-status
+
+---------------------------------------------------------------------------------------
+	phoenix install
+---------------------------------------------------------------------------------------
+1. hbase无法启动:
+删除hadoop下的hbase数据:
+	bin/hadoop fs -ls /
+	bin/hadoop fs -rm -r /hbase
+删除zookeeper下的hbase数据:
+	ls /
+	rmr /hbase
+	ls /
+
+2. install is easy:
+	cp phoenix-5.0.0-HBase-2.0-server.jar ~/hbase-2.0.2/lib/
+	cp phoenix-core-5.0.0-HBase-2.0.jar ~/hbase-2.0.2/lib/
+
+3. 配置HBase以支持Secondary Index:
+在每一个RegionServer的hbase-site.xml中加入如下的属性:
+<property>
+  <name>hbase.regionserver.wal.codec</name>
+  <value>org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec</value>
+</property>
+<property>
+  <name>hbase.region.server.rpc.scheduler.factory.class</name>
+  <value>org.apache.hadoop.hbase.ipc.PhoenixRpcSchedulerFactory</value>
+  <description>Factory to create the Phoenix RPC Scheduler that uses separate queues for index and metadata updates</description>
+</property>
+<property>
+  <name>hbase.rpc.controllerfactory.class</name>
+  <value>org.apache.hadoop.hbase.ipc.controller.ServerRpcControllerFactory</value>
+  <description>Factory to create the Phoenix RPC Scheduler that uses separate queues for index and metadata updates</description>
+</property>
+
+4. restart hbase:
+	bin/stop-hbase.sh
+	bin/start-hbase.sh
+
+5. python tool访问phoenix服务:
+	./sqlline.py master
+

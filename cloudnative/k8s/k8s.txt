@@ -1,0 +1,157 @@
+
+---------------------------------------------------------------------------------------
+	docker-etcd install
+---------------------------------------------------------------------------------------
+docker run --net=host -d gcr.io/google_containers/etcd:2.0.12 /usr/local/bin/etcd --addr=127.0.0.1:4001 --bind-addr=0.0.0.0:4001 --data-dir=/var/etcd/data
+docker container start etcd
+docker exec -it etcd /bin/sh
+
+---------------------------------------------------------------------------------------
+	kubernetes install
+---------------------------------------------------------------------------------------
+------> 1. system set: master and nodes 
+Swap disabled:
+swapoff -a # 临时的，还需要永久的设置配置文件
+vi /etc/fstab  # 在swap分区这行前加 # 禁用掉
+free
+
+应该是master关闭防火墙:
+systemctl stop firewalld # disable是否安全，需要研究
+systemctl disable firewalld
+systemctl stop firewalld
+systemctl disable iptables
+systemctl stop iptables
+
+Disabling SELinux by running setenforce 0 is required to allow containers to access the host filesystem, which is required by pod networks for example:
+setenforce 0
+vi /etc/selinux/config
+disabled
+
+Some users on RHEL/CentOS 7 have reported issues with traffic being routed incorrectly due to iptables being bypassed:
+vi /etc/sysctl.d/k8s.conf 
+sysctl --system
+
+------> 2. master install
+yum install -y kubelet kubeadm kubectl
+
+kubeadm reset
+
+kubeadm init --kubernetes-version 1.11.2 --pod-network-cidr 192.168.0.0/16
+
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+kubectl apply -f [podnetwork].yaml
+kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml
+kubectl apply -f https://docs.projectcalico.org/v3.1/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml
+
+kubectl get pods --all-namespaces
+kubectl get nodes
+
+------> 3. nodes install
+yum install kubectl kubelet kubernetes-cni kubeadm 
+
+kubeadm join 192.168.226.142:6443 --token waeen6.c1hmqi0o1qjibs7v --discovery-token-ca-cert-hash sha256:677ba1aa3e7910c6507d7799963d7931bf3eec12900693a1aafe6c0b3c25e370
+
+-------------------------------------------------->
+[root@localhost ~]# kubeadm init --kubernetes-version 1.11.2 --pod-network-cidr 192.168.0.0/16
+[init] using Kubernetes version: v1.11.2
+[preflight] running pre-flight checks
+	[WARNING Firewalld]: firewalld is active, please ensure ports [6443 10250] are open or your cluster may not function correctly
+I0909 23:34:50.559111   35864 kernel_validator.go:81] Validating kernel version
+I0909 23:34:50.559187   35864 kernel_validator.go:96] Validating kernel config
+[preflight/images] Pulling images required for setting up a Kubernetes cluster
+[preflight/images] This might take a minute or two, depending on the speed of your internet connection
+[preflight/images] You can also perform this action in beforehand using 'kubeadm config images pull'
+[kubelet] Writing kubelet environment file with flags to file "/var/lib/kubelet/kubeadm-flags.env"
+[kubelet] Writing kubelet configuration to file "/var/lib/kubelet/config.yaml"
+[preflight] Activating the kubelet service
+[certificates] Generated ca certificate and key.
+[certificates] Generated apiserver certificate and key.
+[certificates] apiserver serving cert is signed for DNS names [localhost.localdomain kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 192.168.226.142]
+[certificates] Generated apiserver-kubelet-client certificate and key.
+[certificates] Generated sa key and public key.
+[certificates] Generated front-proxy-ca certificate and key.
+[certificates] Generated front-proxy-client certificate and key.
+[certificates] Generated etcd/ca certificate and key.
+[certificates] Generated etcd/server certificate and key.
+[certificates] etcd/server serving cert is signed for DNS names [localhost.localdomain localhost] and IPs [127.0.0.1 ::1]
+[certificates] Generated etcd/peer certificate and key.
+[certificates] etcd/peer serving cert is signed for DNS names [localhost.localdomain localhost] and IPs [192.168.226.142 127.0.0.1 ::1]
+[certificates] Generated etcd/healthcheck-client certificate and key.
+[certificates] Generated apiserver-etcd-client certificate and key.
+[certificates] valid certificates and keys now exist in "/etc/kubernetes/pki"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/admin.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/kubelet.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/controller-manager.conf"
+[kubeconfig] Wrote KubeConfig file to disk: "/etc/kubernetes/scheduler.conf"
+[controlplane] wrote Static Pod manifest for component kube-apiserver to "/etc/kubernetes/manifests/kube-apiserver.yaml"
+[controlplane] wrote Static Pod manifest for component kube-controller-manager to "/etc/kubernetes/manifests/kube-controller-manager.yaml"
+[controlplane] wrote Static Pod manifest for component kube-scheduler to "/etc/kubernetes/manifests/kube-scheduler.yaml"
+[etcd] Wrote Static Pod manifest for a local etcd instance to "/etc/kubernetes/manifests/etcd.yaml"
+[init] waiting for the kubelet to boot up the control plane as Static Pods from directory "/etc/kubernetes/manifests" 
+[init] this might take a minute or longer if the control plane images have to be pulled
+[apiclient] All control plane components are healthy after 44.002375 seconds
+[uploadconfig] storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
+[kubelet] Creating a ConfigMap "kubelet-config-1.11" in namespace kube-system with the configuration for the kubelets in the cluster
+[markmaster] Marking the node localhost.localdomain as master by adding the label "node-role.kubernetes.io/master=''"
+[markmaster] Marking the node localhost.localdomain as master by adding the taints [node-role.kubernetes.io/master:NoSchedule]
+[patchnode] Uploading the CRI Socket information "/var/run/dockershim.sock" to the Node API object "localhost.localdomain" as an annotation
+[bootstraptoken] using token: waeen6.c1hmqi0o1qjibs7v
+[bootstraptoken] configured RBAC rules to allow Node Bootstrap tokens to post CSRs in order for nodes to get long term certificate credentials
+[bootstraptoken] configured RBAC rules to allow the csrapprover controller automatically approve CSRs from a Node Bootstrap Token
+[bootstraptoken] configured RBAC rules to allow certificate rotation for all node client certificates in the cluster
+[bootstraptoken] creating the "cluster-info" ConfigMap in the "kube-public" namespace
+[addons] Applied essential addon: CoreDNS
+[addons] Applied essential addon: kube-proxy
+
+Your Kubernetes master has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of machines by running the following on each node
+as root:
+
+  kubeadm join 192.168.226.142:6443 --token waeen6.c1hmqi0o1qjibs7v --discovery-token-ca-cert-hash sha256:677ba1aa3e7910c6507d7799963d7931bf3eec12900693a1aafe6c0b3c25e370
+
+--------------------------------------------------> ubuntu
+Your Kubernetes master has initialized successfully!
+
+To start using your cluster, you need to run the following as a regular user:
+
+  mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+You should now deploy a pod network to the cluster.
+Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
+  https://kubernetes.io/docs/concepts/cluster-administration/addons/
+
+You can now join any number of machines by running the following on each node
+as root:
+
+  kubeadm join 192.168.1.102:6443 --token ato70l.e5a6pmgg721hgyro --discovery-token-ca-cert-hash sha256:8933f4b49448fafd552466ca675842f79b0cedf442b641e8439ccc8be945736a
+
+-------------------------------------------------->
+[root@localhost downloads]# kubeadm join 192.168.226.142:6443 --token waeen6.c1hmqi0o1qjibs7v --discovery-token-ca-cert-hash sha256:677ba1aa3e7910c6507d7799963d7931bf3eec12900693a1aafe6c0b3c25e370
+[preflight] running pre-flight checks
+	[WARNING RequiredIPVSKernelModulesAvailable]: the IPVS proxier will not be used, because the following required kernel modules are not loaded: [ip_vs ip_vs_rr ip_vs_wrr ip_vs_sh] or no builtin kernel ipvs support: map[ip_vs:{} ip_vs_rr:{} ip_vs_wrr:{} ip_vs_sh:{} nf_conntrack_ipv4:{}]
+you can solve this problem with following methods:
+ 1. Run 'modprobe -- ' to load missing kernel modules;
+2. Provide the missing builtin kernel ipvs support
+
+I0910 01:09:06.225720    6209 kernel_validator.go:81] Validating kernel version
+I0910 01:09:06.225800    6209 kernel_validator.go:96] Validating kernel config
+[preflight] Some fatal errors occurred:
+	[ERROR FileContent--proc-sys-net-bridge-bridge-nf-call-iptables]: /proc/sys/net/bridge/bridge-nf-call-iptables contents are not set to 1
+	[ERROR Swap]: running with swap on is not supported. Please disable swap
+[preflight] If you know what you are doing, you can make a check non-fatal with `--ignore-preflight-errors=...`

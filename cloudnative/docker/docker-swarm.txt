@@ -1,0 +1,52 @@
+---------------------------------------------------------------------------------------
+  docker swarm install
+---------------------------------------------------------------------------------------
+1. init swarm:
+  在管理节点上运行：
+    sudo docker swarm init --advertise-addr 192.168.2.167
+
+2. To add a worker to this swarm, run the following command:
+  在每台工作节点上运行：
+    sudo docker swarm join --token SWMTKN-1-4yqz5gxw8riyghsjvuw2l8zk6lsvtdide35umnh25uacjugo0p-aueoji0kbtsky4jcg63c1d6r2 192.168.2.167:2377
+
+3. To add a manager to this swarm, run 'docker swarm join-token manager' and follow the instructions.
+  增加管理节点
+
+4. 在管理节点上查看：
+    sudo docker node ls
+
+5. 部署一个服务到swarm:
+    sudo docker service create -d \
+      --replicas <Number of tasks> \
+      --name <Service name> \
+      --mount src=<VOLUME-NAME>,dst=<CONTAINER-PATH> \
+      <IMAGE> <command> <arg...>
+    sudo docker service create --replicas 1 --name helloworld alpine ping docker.com
+
+6. 查看服务列表:
+    sudo docker service ls
+    docker ps --format '{{.Names}}'
+    docker exec -it ncda-state-refresh-job_ncda-state-refresh-job.1.x9vscd945dsi0dispwxijyntq /bin/sh
+
+7. 检测swarm上一个服务：
+    sudo docker service inspect --pretty <SERVICE-ID>
+    sudo docker service ps <SERVICE-ID>
+    sudo docker ps
+
+8. 伸缩swarm上的服务数量：
+    sudo docker service scale <SERVICE-ID>=<NUMBER-OF-TASKS>
+    sudo docker service ps <SERVICE-ID>
+    sudo docker ps
+
+9. 从swarm上删除正在运行的服务：
+    sudo docker service rm <SERVICE-ID>
+
+10. 升级image版本:
+
+11. 下线一个节点：
+
+12. 服务发布一个外部访问的端口:
+docker service create \
+  --name <SERVICE-NAME> \
+  --publish published=<PUBLISHED-PORT>,target=<CONTAINER-PORT> \
+  <IMAGE>

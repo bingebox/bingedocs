@@ -1,0 +1,38 @@
+---------------------------------------------------------------------------------------
+  docker images build
+---------------------------------------------------------------------------------------
+1. Dockerfile制作：
+  # test for java
+
+  FROM openjdk:8u131
+
+  RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+  RUN echo 'Asia/Shanghai' >/etc/timezone
+
+  RUN mkdir /opt/rabbit2kafka-rt
+  RUN mkdir /opt/rabbit2kafka-rt/config
+  RUN mkdir /opt/rabbit2kafka-rt/temp
+  RUN mkdir /opt/rabbit2kafka-rt/logs
+
+  VOLUME /opt/rabbit2kafka-rt/logs
+
+  COPY ./rabbit2kafka-rt.jar /opt/rabbit2kafka-rt/
+  COPY ./rabbit2kafka-rt.conf /opt/rabbit2kafka-rt/
+  COPY ./config/application.properties /opt/rabbit2kafka-rt/config/
+  COPY ./config/log4j2.xml /opt/rabbit2kafka-rt/config/
+
+  RUN chmod +x /opt/rabbit2kafka-rt/rabbit2kafka-rt.jar
+
+  CMD /opt/rabbit2kafka-rt/rabbit2kafka-rt.jar 
+
+2. build a docker image:
+  sudo docker build -t rabbit2kafka:v1 .
+
+3. run a docker container:
+  docker run -d -v /data/log/rabbit2kafka:/opt/rabbit2kafka-rt/logs rabbit2kafka:v1
+
+4. 删除image:
+  docker rmi <IMAGE ID>
+  如果有提示container还在关联引用着，不让删除的话，那先删除容器：
+  docker rm <container ID>
+
