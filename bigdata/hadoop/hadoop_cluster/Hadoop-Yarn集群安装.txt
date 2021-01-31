@@ -410,7 +410,7 @@
     $HADOOP_PREFIX/sbin/stop-yarn.sh
     
 7. 整合脚本
-    提供run.sh脚本，包装集群启动关闭命令，方便运维工作。
+    提供[run.sh](./run.sh)脚本，包装集群启动关闭命令，方便运维工作。
 honya@hadoop2:~/hadoop-2.10.0$ ./run.sh 
 usage: ./run.sh [cmd]
    ./run.sh namenode_format [cluster name]
