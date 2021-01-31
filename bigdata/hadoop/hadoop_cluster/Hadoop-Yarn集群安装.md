@@ -1,6 +1,4 @@
---------------------------------------
-# Hadoop-Yarn 集群安装
---------------------------------------  
+# Hadoop-Yarn 集群安装    
 1. 准备安装包  
     安装Java环境：需要JDK8以及以上版本。
     从Hadoop官网下载安装包，当前使用的是hadoop-2.10.0。  
@@ -77,13 +75,12 @@
     所有配置文件和环境脚本文件到放到etc/hadoop/目录下, 进入配置目录:  
         cd hadoop-2.10.0/etc/hadoop/  
     这里配置文件很多，但只要修改4个.xml配置文件和2个.sh脚本文件, 以及slaves：  
-
         core-site.xml  
         hdfs-site.xml  
         yarn-site.xml  
         capacity-scheduler.xml  
         slaves  
-        hadoop-env.sh  
+        hadoop-env.sh   
         yarn-env.sh  
     因为默认的模板文件基本是空的，需要我们根据官网文档和实际安装情况来配置，为了降低部署难度，    
     特提供测试环境使用的6个文件，我们在线上部署时，在提供的文件基础上进行修改就比较简单了。  
