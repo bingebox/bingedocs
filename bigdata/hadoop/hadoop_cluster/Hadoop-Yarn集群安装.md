@@ -1,14 +1,17 @@
---------------------------------------------------------------------------------------------------
-            Hadoop-Yarn 集群安装
---------------------------------------------------------------------------------------------------
+--------------------------------------
+# Hadoop-Yarn 集群安装
+--------------------------------------
 
-0. 准备安装包
+1. 准备安装包
+
     安装Java环境：需要JDK8以及以上版本。
     从Hadoop官网下载安装包，当前使用的是hadoop-2.10.0。
     下载地址：https://archive.apache.org/dist/hadoop/common/hadoop-2.10.0/, 下载得到：hadoop-2.10.0.tar.gz。
 
-1. 安装
-1.1 系统软硬件环境安装
+2. 安装
+
+2.1 系统软硬件环境安装
+
     先规划好硬件服务器，至少3台以上，形成一个集群。
     首先安装好Linux系统，并在每台机器上安装好Java JDK环境。
     本例是安装到/opt/ncdw/jdk1.8.0_144目录，下面配置环境变量时要一致。
@@ -47,7 +50,8 @@
         tar zxvf hadoop-2.10.0.tar.gz
     则/opt/ncdw/hadoop-2.10.0是hadoop yarn安装目录，下面配置时会使用到，要保持一致。
 
-1.2 创建子目录
+2.2 创建子目录
+
     在所有节点上，创建需要的子目录：
     cd hadoop-2.10.0/
     mkdir -p dfs/data dfs/name
@@ -55,7 +59,8 @@
     mkdir -p tmp/hdfs tmp/yarn 
     当然，你也可以把dfs,logs,tmp软链接到数据分区，防止/分区磁盘满。
 
-2. 设置环境变量
+3. 设置环境变量
+
     在所有节点上设置环境变量.
     vi ~/.profile, 添加：
         # 假设jdk安装在/opt/ncdw/目录下, 自己安装实际情况配置线上路径
@@ -73,7 +78,8 @@
 
     使其生效，执行: . ~/.profile
 
-3. 配置
+4. 配置
+
     所有配置文件和环境脚本文件到放到etc/hadoop/目录下, 进入配置目录:
         cd hadoop-2.10.0/etc/hadoop/
     这里配置文件很多，但只要修改4个.xml配置文件和2个.sh脚本文件, 以及slaves：
@@ -89,7 +95,8 @@
     节点模板配置文件在：install\hadoop_cluster\config
     我们在这6个模板文件基础之上，按实际情况进行修改，具体修改方法如下章节所述。
 
-3.1 hadoop-env.sh
+4.1 hadoop-env.sh
+
     主要把以下配置项的路径，按实际情况进行配置：
     JAVA_HOME=/opt/ncdw/jdk1.8.0_144
     export HADOOP_PREFIX=/opt/ncdw/hadoop-2.10.0
@@ -101,7 +108,8 @@
     注意以上配置必须正确，当我们执行批量启动时，可能出现找不到路径现象，就是配置没有生效。
     不知道为什么env环境变量里的不能读取到，必须在本文件里设置死，郁闷。
 
-3.2 yarn-env.sh
+4.2 yarn-env.sh
+
     主要把以下配置项的路径，按实际情况进行配置：
     这里假设运行yarn集群用的是用户honya来执行的，如果是不一样的用户名则改之。
     HADOOP_YARN_USER=honya
@@ -109,7 +117,8 @@
     YARN_CONF_DIR=$HADOOP_YARN_HOME/etc/hadoop
     YARN_LOG_DIR="$HADOOP_YARN_HOME/logs/yarn"
 
-3.3 core-site.xml
+4.3 core-site.xml
+
     主要修改两项：
     安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
     <property>
@@ -123,7 +132,8 @@
         <value>hdfs://hadoop-master:9900</value>
     </property>
 
-3.4 hdfs-site.xml
+4.4 hdfs-site.xml
+
     主要修改两项：
     安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
     <property>
@@ -144,7 +154,8 @@
         <description> hdfs scondary web ui 地址 </description>
     </property>
 
-3.5 yarn-site.xml
+4.5 yarn-site.xml
+
     安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
     <property>
         <name>hadoop.home</name>
@@ -288,7 +299,8 @@
     <value>${yarn.log.dir}/userlogs</value>
   </property>
   
-3.6 capacity-scheduler.xml
+4.6 capacity-scheduler.xml
+
     <property>
         <name>yarn.scheduler.capacity.resource-calculator</name>
         <!--
@@ -305,21 +317,25 @@
     </property>
     注释里的英文已经说明白了，如果采用DefaultResourceCalculator则仅仅计算内存，只有DominantResourceCalculator才同时计算内存和CPU。
 
-3.7 slaves: 从节点域名配置
+4.7 slaves: 从节点域名配置
+
     hadoop1
     hadoop3
     hadoop4
     hadoop2 (如果在master节点上同时部署slave的话)
 
-3.8 配置文件分发
+4.8 配置文件分发
+
     一旦这7份配置文件都修改妥当，则把它们分发到所有节点服务器的HADOOP_CONF_DIR目录里，所有节点应当目录规划一致。
 
-4. 运行集群的系统用户账号
+5. 运行集群的系统用户账号
+
     通常，推荐HDFS和YARN集群运行在两个不同的账号下，例如：HDFS采用hdfs用户，YARN采用yarn用户。
     本例中，我们只采用一个账号honya，HDFS和YARN安装目录也在同一台机器上，只是dfs、logs、tmp下建立HDFS和YARN各自子目录而已。
     为了把Hadoop集群运行起来，必须同时启动HDFS和YARN两个集群。
 
-5. 设置ssh免密登录
+6. 设置ssh免密登录
+
     为了从master节点免密登录所有slave节点，我们在master节点192.168.3.2上执行：
     ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
     在honya用户主目录下.ssh目录里，得到：
@@ -345,11 +361,13 @@
     ssh honya@192.168.3.4
     应该都是直接进入，不再提示输入密码了。
 
-4. 格式化hdfs
+7. 格式化hdfs
     $HADOOP_PREFIX/bin/hdfs namenode -format <cluster_name>
 
-5. 启动hadoop NameNode daemon和DataNode daemon
-5.1 启动/关闭HDFS NameNode:
+8. 启动hadoop NameNode daemon和DataNode daemon
+
+8.1 启动/关闭HDFS NameNode:
+
     在master节点192.168.3.2上执行：hadoop2
     执行:
     $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode
@@ -358,7 +376,8 @@
     关闭则执行：
     $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs stop namenode
 
-5.2 启动/关闭HDFS DataNode:
+8.2 启动/关闭HDFS DataNode:
+
     在各个slave节点上执行：这里是3台机器hadoop1, hadoop3, hadoop4
     执行:
     $HADOOP_PREFIX/sbin/hadoop-daemons.sh --config $HADOOP_CONF_DIR --script hdfs start datanode
@@ -366,7 +385,8 @@
     关闭则执行：
     $HADOOP_PREFIX/sbin/hadoop-daemons.sh --config $HADOOP_CONF_DIR --script hdfs stop datanode
 
-5.3 启动/关闭所有节点：
+8.3 启动/关闭所有节点：
+
     上面我们已经设置了master节点免密登录所有slave节点，则可以在master节点一次性启动整个集群。
     执行:
     $HADOOP_PREFIX/sbin/start-dfs.sh
@@ -374,8 +394,10 @@
     关闭则执行：
     $HADOOP_PREFIX/sbin/stop-dfs.sh
 
-6. 启动ResourceManager daemon 和 NodeManager daemon
-6.1 启动/关闭ResourceManager节点：
+9. 启动ResourceManager daemon 和 NodeManager daemon
+
+9.1 启动/关闭ResourceManager节点：
+
     在master节点192.168.3.2上执行：hadoop2
     执行:
     $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR start resourcemanager
@@ -384,7 +406,8 @@
     关闭则执行：
     $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR stop resourcemanager
 
-6.2 启动/关闭NodeManager节点：
+9.2 启动/关闭NodeManager节点：
+
     在各个slave节点上执行：这里是3台机器hadoop1, hadoop3, hadoop4
     执行:
     $HADOOP_YARN_HOME/sbin/yarn-daemons.sh --config $HADOOP_CONF_DIR start nodemanager
@@ -392,7 +415,8 @@
     关闭则执行：
     $HADOOP_YARN_HOME/sbin/yarn-daemons.sh --config $HADOOP_CONF_DIR stop nodemanager
     
-6.3 启动/关闭standalone WebAppProxy server：
+9.3 启动/关闭standalone WebAppProxy server：
+
     WebAppProxy可以独立部署在一台或多台服务器上，只要你有资源，本例中我们还是和ResourceManager节点同一台机器部署。
     在master节点192.168.3.2上执行：hadoop2
     执行:
@@ -401,7 +425,8 @@
     关闭则执行：
     $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR stop proxyserver
     
-6.4 启动所有节点：
+9.4 启动所有节点：
+
     上面我们已经设置了master节点免密登录所有slave节点，则可以在master节点一次性启动整个集群。
     执行:
     $HADOOP_PREFIX/sbin/start-yarn.sh
@@ -409,22 +434,20 @@
     关闭则执行：
     $HADOOP_PREFIX/sbin/stop-yarn.sh
     
-7. 整合脚本
+10. 整合脚本
+
     提供[run.sh](./run.sh)脚本，包装集群启动关闭命令，方便运维工作。
 honya@hadoop2:~/hadoop-2.10.0$ ./run.sh 
 usage: ./run.sh [cmd]
    ./run.sh namenode_format [cluster name]
-----------------------------------------------
    ./run.sh start [namenode | datanode]
    ./run.sh stop [namenode | datanode]
    ./run.sh start dfs
    ./run.sh stop dfs
-----------------------------------------------
    ./run.sh start [resourcemanager | nodemanager]
    ./run.sh stop [resourcemanager | nodemanager]
    ./run.sh start yarn
    ./run.sh stop yarn
    ./run.sh start proxyserver
    ./run.sh stop proxyserver
-----------------------------------------------
    ./run.sh set_env
