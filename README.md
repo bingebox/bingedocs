@@ -9,7 +9,7 @@
     * Zookeeper
     * Kafka
     * RabbitMQ
-    * [Hadoop Yarn](/tree/main/bigdata/hadoop/hadoop_cluster)
+    * [Hadoop Yarn](/bigdata/hadoop/hadoop_cluster/Hadoop-Yarn集群安装.txt)
     * Azkaban
 
 2. 云原生
