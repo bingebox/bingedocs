@@ -248,11 +248,11 @@
             <value>4</value>
         </property>
 
-    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ****************** 必须根据服务器实际内存来修改 ************************
+    !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
+    ****************** 必须根据服务器实际内存来修改 ************************  
     !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  
     NodeManager节点最大可用内存, 根据实际机器上的物理内存进行配置：  
-    NodeManager节点最大Container数量: 
+    NodeManager节点最大Container数量:   
         max(Container) = yarn.nodemanager.resource.memory-mb / yarn.scheduler.maximum-allocation-mb  
 
         <property>
@@ -322,7 +322,7 @@
                 multi-dimensional resources such as Memory, CPU etc.
             </description>
         </property>
-    注释里的英文已经说明白了，如果采用DefaultResourceCalculator则仅仅计算内存，只有DominantResourceCalculator才同时计算内存和CPU。
+    注释里的英文已经说明白了，如果采用DefaultResourceCalculator则仅仅计算内存，只有DominantResourceCalculator才同时计算内存和CPU。  
 
 * 4.7 slaves: 从节点域名配置  
 
@@ -332,12 +332,12 @@
         hadoop2 (如果在master节点上同时部署slave的话)
 
 * 4.8 配置文件分发   
-    一旦这7份配置文件都修改妥当，则把它们分发到所有节点服务器的HADOOP_CONF_DIR目录里，所有节点应当目录规划一致。
+    一旦这7份配置文件都修改妥当，则把它们分发到所有节点服务器的HADOOP_CONF_DIR目录里，所有节点应当目录规划一致。  
 
 5. 运行集群的系统用户账号  
-    通常，推荐HDFS和YARN集群运行在两个不同的账号下，例如：HDFS采用hdfs用户，YARN采用yarn用户。
-    本例中，我们只采用一个账号honya，HDFS和YARN安装目录也在同一台机器上，只是dfs、logs、tmp下建立HDFS和YARN各自子目录而已。
-    为了把Hadoop集群运行起来，必须同时启动HDFS和YARN两个集群。
+    通常，推荐HDFS和YARN集群运行在两个不同的账号下，例如：HDFS采用hdfs用户，YARN采用yarn用户。  
+    本例中，我们只采用一个账号honya，HDFS和YARN安装目录也在同一台机器上，只是dfs、logs、tmp下建立HDFS和YARN各自子目录而已。  
+    为了把Hadoop集群运行起来，必须同时启动HDFS和YARN两个集群。  
 
 6. 设置ssh免密登录  
     为了从master节点免密登录所有slave节点，我们在master节点192.168.3.2上执行：  
@@ -366,12 +366,11 @@
     应该都是直接进入，不再提示输入密码了。  
 
 7. 格式化hdfs  
-    $HADOOP_PREFIX/bin/hdfs namenode -format <cluster_name>
+    $HADOOP_PREFIX/bin/hdfs namenode -format <cluster_name>  
 
 8. 启动hadoop NameNode daemon和DataNode daemon  
 * 8.1 启动/关闭HDFS NameNode:  
-    在master节点192.168.3.2上执行：hadoop2  
-    执行:  
+    在master节点192.168.3.2上执行：
     $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode  
     启动成功后，可以打开管理系统：http://192.168.3.2:50070/  
 
@@ -396,8 +395,7 @@
 
 9. 启动ResourceManager daemon 和 NodeManager daemon  
 * 9.1 启动/关闭ResourceManager节点：  
-    在master节点192.168.3.2上执行：hadoop2  
-    执行:  
+    在master节点192.168.3.2上执行：  
     $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR start resourcemanager  
     启动成功后，可以打开管理系统：http://192.168.3.2:8088/   
 
