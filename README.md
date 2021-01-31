@@ -6,8 +6,8 @@
     * MinIO
     * MySQL
     * Redis
-    * Zookeeper
-    * Kafka
+    * [Zookeeper](/bigdata/zookeeper/zookeeper.md)
+    * [Kafka](/bigdata/kafka/kafka.md)
     * RabbitMQ
     * [Hadoop Yarn](/bigdata/hadoop/hadoop_cluster/Hadoop-Yarn集群安装.md)
     * Azkaban
