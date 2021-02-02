@@ -5,6 +5,7 @@
 
 2. 修改配置文件  
 	vi config/server.properties:  
+
         # Kafka broker的id, 从0开始，一个节点一个唯一性编号: 0, 1, 2 
         broker.id=0  
 
