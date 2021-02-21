@@ -12,9 +12,10 @@
     * Azkaban
 
 2. 云原生
-    * [Cloud Native](/cloudnative/basic/README.md)
+    * [云原生](/cloudnative/basic/README.md)
     * 微服务
     * DDD
+    * DevOps
     * SpringCloud
     * Docker
     * Swarm
@@ -26,4 +27,3 @@
     * CoreDNS
     * K8S
     * K3S
-    * DevOps
