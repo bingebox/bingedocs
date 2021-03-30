@@ -13,7 +13,7 @@
 
 2. 云原生
     * [云原生](/cloudnative/basic/README.md)
-    * DDD
+    * DDD领域驱动设计
     * DevOps
     * SpringCloud
     * Docker
