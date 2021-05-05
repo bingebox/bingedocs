@@ -13,9 +13,7 @@
 
 2. 云原生
     * [云原生](/cloudnative/basic/README.md)
-    * DDD
     * DevOps
-    * SpringCloud
     * Docker
     * Swarm
     * Portainer
@@ -26,3 +24,18 @@
     * CoreDNS
     * K8S
     * K3S
+    * Prometheus
+    * Grafana
+    * SkyWalking
+
+3. 微服务
+    * [面向对象设计](/ood/README.md)
+    * 微服务
+    * DDD领域驱动设计
+    * SpringCloud
+
+4. 人工智能
+    * 机器学习
+    * 深度学习
+    * 人脸识别
+   
