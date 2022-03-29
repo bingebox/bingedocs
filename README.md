@@ -23,7 +23,7 @@
     * Traefik
     * CoreDNS
     * K8S
-    * K3S
+    * K3S 
     * Prometheus
     * Grafana
     * SkyWalking
