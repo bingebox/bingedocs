@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  api:
+    image: registry:2.7.1
+    restart: always
+    volumes:
+      - /data/registry:/var/lib/registry
+    ports:
+      - 5000:5000
+  web:
+    image: hyper/docker-registry-web:v0.1.2
+    restart: always
+    ports:
+      - 9080:8080
+    environment:
+      - REGISTRY_URL=http://api:5000/v2
+      - REGISTRY_NAME=192.168.3.2:5000
+      - REGISTRY_READONLY=false

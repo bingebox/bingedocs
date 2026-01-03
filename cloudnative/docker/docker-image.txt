@@ -1,37 +1,45 @@
 ---------------------------------------------------------------------------------------
   docker images build
 ---------------------------------------------------------------------------------------
-1. Dockerfile制作：
-  # test for java
+  假如我们创建一个SpringBoot工程，名称为demo, 编译成可执行jar文件，有基本的配置文件和日志配置文件，现在我们来看怎么做一个Docker镜像。
+1. 制作Dockerfile：
+  # Demo for java
 
+  # 指定一个基础镜像
   FROM openjdk:8u131
 
+  # 指定时区
   RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
   RUN echo 'Asia/Shanghai' >/etc/timezone
 
-  RUN mkdir /opt/rabbit2kafka-rt
-  RUN mkdir /opt/rabbit2kafka-rt/config
-  RUN mkdir /opt/rabbit2kafka-rt/temp
-  RUN mkdir /opt/rabbit2kafka-rt/logs
+  # 创建目录
+  RUN mkdir /opt/demo
+  RUN mkdir /opt/demo/config
+  RUN mkdir /opt/demo/temp
+  RUN mkdir /opt/demo/logs
 
-  VOLUME /opt/rabbit2kafka-rt/logs
+  VOLUME /opt/demo/logs
 
-  COPY ./rabbit2kafka-rt.jar /opt/rabbit2kafka-rt/
-  COPY ./rabbit2kafka-rt.conf /opt/rabbit2kafka-rt/
-  COPY ./config/application.properties /opt/rabbit2kafka-rt/config/
-  COPY ./config/log4j2.xml /opt/rabbit2kafka-rt/config/
+  # 拷贝可执行jar文件和相关配置文件
+  COPY ./demo.jar /opt/demo/
+  COPY ./config/application.properties /opt/demo/config/
+  COPY ./config/log4j2.xml /opt/demo/config/
 
-  RUN chmod +x /opt/rabbit2kafka-rt/rabbit2kafka-rt.jar
+  # 赋予可执行权限
+  RUN chmod +x /opt/demo/demo.jar
 
-  CMD /opt/rabbit2kafka-rt/rabbit2kafka-rt.jar 
+  # 指定运行命令
+  CMD /opt/demo/demo.jar 
 
-2. build a docker image:
-  sudo docker build -t rabbit2kafka:v1 .
+2. 创建Docker镜像:
+  sudo docker build -t domo:v1 .
 
-3. run a docker container:
-  docker run -d -v /data/log/rabbit2kafka:/opt/rabbit2kafka-rt/logs rabbit2kafka:v1
+3. 运行Docker容器:
+  docker run -d -v /data/log/demo:/opt/demo/logs demo:v1
+  docker ps
+  docker ps -a
 
-4. 删除image:
+4. 删除Docker镜像:
   docker rmi <IMAGE ID>
   如果有提示container还在关联引用着，不让删除的话，那先删除容器：
   docker rm <container ID>

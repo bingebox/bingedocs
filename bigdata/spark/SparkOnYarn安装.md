@@ -1,7 +1,7 @@
-------------------------------------------------------------------------------------
-            Spark on YARN安装
-------------------------------------------------------------------------------------
-1. 准备安装包
+# Spark on YARN安装
+
+## 1. 准备安装包
+
     本文以spark-2.4.5版本安装为例来进行阐述。
     从Spark官网下载spark-2.4.5-bin-hadoop2.7.tgz, 上传到目标Linux服务器，创建安装目录：
     mkdir /opt/ncdw
@@ -9,7 +9,8 @@
     tar zxvf spark-2.4.5-bin-hadoop2.7.tgz
     cd spark-2.4.5-bin-hadoop2.7/
 
-2. 安装Spark on Hadoop YARN
+## 2. 安装Spark on Hadoop YARN
+
     不要单独搭建Spark集群，采用Hadoop YARN来运行Spark任务比较好，在YARN上还可以运行Flink任务、Hadoop MapReduce任务。
     1) 把spark-2.4.5-bin-hadoop2.7部署到Hadoop YARN集群的某个节点上, 则相关配置和环境变量都已经配置好了;
 
@@ -33,7 +34,8 @@
     生效:
     . ~/.profile
 
-3. 发布 Spark Job on YARN
+## 3. 发布 Spark Job on YARN
+
     发布一个Spark Job主要采用spark-submit脚本工具来提交。
     spark-submit --class path.to.your.Class --master yarn --deploy-mode cluster [options] <app jar> [app options]
     具体看相关实际项目，这里不细述。

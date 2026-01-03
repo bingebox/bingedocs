@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-HADOOP_YARN_USER=honya
+HADOOP_YARN_USER=test
 YARN_CONF_DIR=$HADOOP_YARN_HOME/etc/hadoop
 
 # User for YARN daemons
@@ -24,7 +24,7 @@ export YARN_CONF_DIR="${YARN_CONF_DIR:-$HADOOP_YARN_HOME/conf}"
 
 # some Java parameters
 # export JAVA_HOME=/home/y/libexec/jdk1.6.0/
-export JAVA_HOME=/opt/ncdw/jdk1.8.0_144
+export JAVA_HOME=/opt/bigdata/jdk1.8.0_144
 if [ "$JAVA_HOME" != "" ]; then
   #echo "run java in $JAVA_HOME"
   JAVA_HOME=$JAVA_HOME

@@ -10,7 +10,7 @@
 
 3. 更改docker的配置文件，添加自己的私库地址:
   sudo vim /etc/default/docker
-  DOCKER_OPTS="--registry-mirror=http://hub-mirror.c.163.com --insecure-registry 192.168.147.129:5000"
+  DOCKER_OPTS="--registry-mirror=http://hub-mirror.c.163.com --insecure-registry 192.168.2.167:5000"
 
 4. 重启容器并开启registry服务:
   sudo service docker restart   //重启容器

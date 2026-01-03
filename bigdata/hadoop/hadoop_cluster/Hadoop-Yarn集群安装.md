@@ -1,4 +1,6 @@
 # Hadoop-Yarn 集群安装    
+
+    上一篇大数据文章讲解了在单机上搭建Hadoop-Yarn 伪分布式集群的安装方法，方便大家学习，真实环境不可能只有一台机器，肯定是多节点的集群，大单位还会建设很多Hadoop集群，比如各个大部门有自己的集群，或者按热、温、冷来划分建立集群，反正都是很多台服务器安装Linux系统来搭建一个集群。
 1. 准备安装包  
     安装Java环境：需要JDK8以及以上版本。
     从Hadoop官网下载安装包，当前使用的是hadoop-2.10.0。  
@@ -8,41 +10,42 @@
 * 2.1 系统软硬件环境安装  
     先规划好硬件服务器，至少3台以上，形成一个集群。  
     首先安装好Linux系统，并在每台机器上安装好Java JDK环境。  
-    本例是安装到/opt/ncdw/jdk1.8.0_144目录，下面配置环境变量时要一致。  
+    本例是安装到/opt/bigdata/jdk1.8.0_144目录，下面配置环境变量时要一致。  
 
     通常，集群中的一台机器被指定为NameNode，另一台机器被指定为ResourceManager。它们是master节点。  
     集群中的其余机器同时充当DataNode和NodeManager, 它们是slave节点。  
-    注意：我们建立的HadoopYarn集群主要是用来执行Spark和Flink Job的，并不是用hdfs来存储海量数据的，  
+    注意：我建立的HadoopYarn集群主要是用来执行Spark和Flink Job的，并不是用hdfs来存储海量数据的，  
     hdfs只是用来支持Spark和Flink的jar文件分发的，所以为节省机器资源，我们把NameNode和ResourceManager部署在同一个节点，  
     而DataNode和NodeManager也在多个slave节点同时部署，当然DataNode可以少启动一点。  
+    如果你需要用hdfs来存储真正的大数据，则节点规划肯定不同。
 
     本案例采用四台服务器来搭建集群：  
-    192.168.3.1  
-    192.168.3.2  
-    192.168.3.3  
-    192.168.3.4  
+    192.168.1.1  
+    192.168.1.2  
+    192.168.1.3  
+    192.168.1.4  
 
     在每一台机器上都设置hosts:  
     vi /etc/hosts  
     添加四条记录：  
-    192.168.3.1	hadoop1  
-    192.168.3.2	hadoop2  
-    192.168.3.2	hadoop-master  
-    192.168.3.3	hadoop3  
-    192.168.3.4	hadoop4  
+    192.168.1.1	hadoop1  
+    192.168.1.2	hadoop2  
+    192.168.1.2	hadoop-master  
+    192.168.1.3	hadoop3  
+    192.168.1.4	hadoop4  
     当然，建议直接在CoreDNS一次性配置更方便，每台机器/etc/resolv.conf上配置：  
     nameserver <CoreDNS IP>  
 
     本安装例子做如下规划，特别注意master和slave域名和IP配置:  
     master节点为: hadoop2, hadoop-master  
-    slave节点为：hadoop1、hadoop3、hadoop4、也可以把hadoop2同时作为slave节点(请从实际资源情况和集群稳定性情况考虑吧)  
+    slave节点为：hadoop1、hadoop3、hadoop4、也可以把hadoop2同时作为slave节点(请从实际资源情况和集群稳定性情况考虑)  
     下面配置环境变量和配置文件时，会使用到这些域名。  
 
     然后把Hadoop安装包上传到所有Linux服务器，创建安装目录：  
-        mkdir /opt/ncdw  
-    把hadoop-2.10.0.tar.gz放到/opt/ncdw目录下，解压：  
+        mkdir /opt/bigdata  
+    把hadoop-2.10.0.tar.gz放到/opt/bigdata目录下，解压：  
         tar zxvf hadoop-2.10.0.tar.gz  
-    则/opt/ncdw/hadoop-2.10.0是hadoop yarn安装目录，下面配置时会使用到，要保持一致。  
+    则/opt/bigdata/hadoop-2.10.0是安装目录，下面配置时会使用到，要保持一致。  
 
 * 2.2 创建子目录  
     在所有节点上，创建需要的子目录：  
@@ -55,15 +58,15 @@
 3. 设置环境变量  
     在所有节点上设置环境变量.  
     vi ~/.profile, 添加：  
-        # 假设jdk安装在/opt/ncdw/目录下, 自己安装实际情况配置线上路径  
+        # 假设jdk安装在/opt/bigdata/目录下, 自己安装实际情况配置线上路径  
 
-        export JAVA_HOME=/opt/ncdw/jdk1.8.0_144    
+        export JAVA_HOME=/opt/bigdata/jdk1.8.0_144    
 
-        export HADOOP_PREFIX=/opt/ncdw/hadoop-2.10.0  
+        export HADOOP_PREFIX=/opt/bigdata/hadoop-2.10.0  
         export HADOOP_HOME=$HADOOP_PREFIX  
         export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop  
 
-        export HADOOP_YARN_HOME=/opt/ncdw/hadoop-2.10.0  
+        export HADOOP_YARN_HOME=/opt/bigdata/hadoop-2.10.0  
         export YARN_CONF_DIR=$HADOOP_YARN_HOME/etc/hadoop  
 
         export PATH=$JAVA_HOME/bin:$PATH:$HADOOP_HOME/bin  
@@ -79,21 +82,20 @@
         hdfs-site.xml  
         yarn-site.xml  
         capacity-scheduler.xml  
-        slaves  
         hadoop-env.sh   
         yarn-env.sh  
+        slaves  
     因为默认的模板文件基本是空的，需要我们根据官网文档和实际安装情况来配置，为了降低部署难度，    
     特提供测试环境使用的6个文件，我们在线上部署时，在提供的文件基础上进行修改就比较简单了。  
-    节点模板配置文件在：install\hadoop_cluster\config  
     我们在这6个模板文件基础之上，按实际情况进行修改，具体修改方法如下章节所述。  
 
 * 4.1 hadoop-env.sh  
     主要把以下配置项的路径，按实际情况进行配置：  
 
-        JAVA_HOME=/opt/ncdw/jdk1.8.0_144  
-        export HADOOP_PREFIX=/opt/ncdw/hadoop-2.10.0  
+        JAVA_HOME=/opt/bigdata/jdk1.8.0_144  
+        export HADOOP_PREFIX=/opt/bigdata/hadoop-2.10.0  
         export HADOOP_HOME=$HADOOP_PREFIX  
-        export HADOOP_YARN_HOME=/opt/ncdw/hadoop-2.10.0  
+        export HADOOP_YARN_HOME=/opt/bigdata/hadoop-2.10.0  
         export HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop  
         export HADOOP_LOG_DIR=${HADOOP_HOME}/logs/hdfs  
     一般上面没有改动的话，直接用提供的hadoop-env.sh覆盖etc/hadoop下的文件即可。  
@@ -102,20 +104,20 @@
 
 * 4.2 yarn-env.sh  
     主要把以下配置项的路径，按实际情况进行配置：
-    这里假设运行yarn集群用的是用户honya来执行的，如果是不一样的用户名则改之。
+    这里假设运行yarn集群用的是用户test来执行的，如果是不一样的用户名则改之。
 
-        HADOOP_YARN_USER=honya
-        export JAVA_HOME=/opt/ncdw/jdk1.8.0_144
+        HADOOP_YARN_USER=test
+        export JAVA_HOME=/opt/bigdata/jdk1.8.0_144
         YARN_CONF_DIR=$HADOOP_YARN_HOME/etc/hadoop
         YARN_LOG_DIR="$HADOOP_YARN_HOME/logs/yarn"
 
 * 4.3 core-site.xml  
     主要修改两项：  
-    安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0  
+    安装路径要填写实际的目录，如: /opt/bigdata/hadoop-2.10.0  
 
         <property>
             <name>hadoop.home</name>
-            <value>/opt/ncdw/hadoop-2.10.0</value>
+            <value>/opt/bigdata/hadoop-2.10.0</value>
         </property>
 
     修改hdfs的IP和端口。  
@@ -127,11 +129,11 @@
 
 * 4.4 hdfs-site.xml  
     主要修改两项：  
-    安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
+    安装路径要填写实际的目录，如: /opt/bigdata/hadoop-2.10.0
 
         <property>
             <name>hadoop.home</name>
-            <value>/opt/ncdw/hadoop-2.10.0</value>
+            <value>/opt/bigdata/hadoop-2.10.0</value>
         </property>
 
     修改master节点域名 hadoop-master: (在每台服务器上已经配置/etc/hosts或CoreDNS里配置, 参见1.1节)  
@@ -149,11 +151,11 @@
         </property>
 
 * 4.5 yarn-site.xml  
-    安装路径要填写实际的目录，如: /opt/ncdw/hadoop-2.10.0
+    安装路径要填写实际的目录，如: /opt/bigdata/hadoop-2.10.0
 
         <property>
             <name>hadoop.home</name>
-            <value>/opt/ncdw/hadoop-2.10.0</value>
+            <value>/opt/bigdata/hadoop-2.10.0</value>
         </property>
 
     修改master节点地址: hadoop-master, (在每台服务器上已经配置/etc/hosts或CoreDNS里配置, 参见1.1节)
@@ -333,13 +335,13 @@
 
 5. 运行集群的系统用户账号  
     通常，推荐HDFS和YARN集群运行在两个不同的账号下，例如：HDFS采用hdfs用户，YARN采用yarn用户。  
-    本例中，我们只采用一个账号honya，HDFS和YARN安装目录也在同一台机器上，只是dfs、logs、tmp下建立HDFS和YARN各自子目录而已。  
+    本例中，我们只采用一个账号test，HDFS和YARN安装目录也在同一台机器上，只是dfs、logs、tmp下建立HDFS和YARN各自子目录而已。  
     为了把Hadoop集群运行起来，必须同时启动HDFS和YARN两个集群。  
 
 6. 设置ssh免密登录  
-    为了从master节点免密登录所有slave节点，我们在master节点192.168.3.2上执行：  
+    为了从master节点免密登录所有slave节点，我们在master节点192.168.1.2上执行：  
     ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa  
-    在honya用户主目录下.ssh目录里，得到：  
+    在test用户主目录下.ssh目录里，得到：  
     authorized_keys  id_rsa  id_rsa.pub  known_hosts  
 
     先把自己id_rsa.pub添加进authorized_keys:  
@@ -347,19 +349,19 @@
     chmod 0600 ~/.ssh/authorized_keys  
 
     现在需要把id_rsa.pub文件分发到所有slave节点，追加到它们.ssh目录里authorized_keys之中。  
-    scp ~/.ssh/id_rsa.pub honya@192.168.3.1:./  
-    scp ~/.ssh/id_rsa.pub honya@192.168.3.3:./  
-    scp ~/.ssh/id_rsa.pub honya@192.168.3.4:./  
+    scp ~/.ssh/id_rsa.pub test@192.168.1.1:./  
+    scp ~/.ssh/id_rsa.pub test@192.168.1.3:./  
+    scp ~/.ssh/id_rsa.pub test@192.168.1.4:./  
     
     然后在3台机器上去执行：
     cat ~/id_rsa.pub >> ~/.ssh/authorized_keys  
     chmod 0600 ~/.ssh/authorized_keys  
 
-    大功告成，我们从192.168.3.2上登录其它4台机器(包括自己，如果自己也作为slave节点的话)试试看：  
-    ssh honya@192.168.3.1  
-    ssh honya@192.168.3.2  
-    ssh honya@192.168.3.3  
-    ssh honya@192.168.3.4  
+    大功告成，我们从192.168.1.2上登录其它4台机器(包括自己，如果自己也作为slave节点的话)试试看：  
+    ssh test@192.168.1.1  
+    ssh test@192.168.1.2  
+    ssh test@192.168.1.3  
+    ssh test@192.168.1.4  
     应该都是直接进入，不再提示输入密码了。  
 
 7. 格式化hdfs  
@@ -367,9 +369,9 @@
 
 8. 启动hadoop NameNode daemon和DataNode daemon  
 * 8.1 启动/关闭HDFS NameNode:  
-    在master节点192.168.3.2上执行：
+    在master节点192.168.1.2上执行：
     $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs start namenode  
-    启动成功后，可以打开管理系统：http://192.168.3.2:50070/  
+    启动成功后，可以打开管理系统：http://192.168.1.2:50070/  
 
     关闭则执行：  
     $HADOOP_PREFIX/sbin/hadoop-daemon.sh --config $HADOOP_CONF_DIR --script hdfs stop namenode  
@@ -392,9 +394,9 @@
 
 9. 启动ResourceManager daemon 和 NodeManager daemon  
 * 9.1 启动/关闭ResourceManager节点：  
-    在master节点192.168.3.2上执行：  
+    在master节点192.168.1.2上执行：  
     $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR start resourcemanager  
-    启动成功后，可以打开管理系统：http://192.168.3.2:8088/   
+    启动成功后，可以打开管理系统：http://192.168.1.2:8088/   
 
     关闭则执行：  
     $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR stop resourcemanager  
@@ -409,7 +411,7 @@
     
 * 9.3 启动/关闭standalone WebAppProxy server：  
     WebAppProxy可以独立部署在一台或多台服务器上，只要你有资源，本例中我们还是和ResourceManager节点同一台机器部署。  
-    在master节点192.168.3.2上执行：hadoop2  
+    在master节点192.168.1.2上执行：hadoop2  
     执行:  
     $HADOOP_YARN_HOME/sbin/yarn-daemon.sh --config $HADOOP_CONF_DIR start proxyserver  
 
@@ -425,8 +427,8 @@
     $HADOOP_PREFIX/sbin/stop-yarn.sh  
     
 10. 整合脚本  
-    提供[run.sh](./run.sh)脚本，包装集群启动关闭命令，方便运维工作。  
-    honya@hadoop2:~/hadoop-2.10.0$ ./run.sh  
+    每次都搞这么长的命令太复杂了，提供run.sh脚本，包装集群启动关闭命令，方便运维工作。  
+    test@hadoop2:/opt/bigdata/hadoop-2.10.0$ ./run.sh  
     usage: ./run.sh [cmd]  
     ./run.sh namenode_format [cluster name]  
     ./run.sh start [namenode | datanode]  

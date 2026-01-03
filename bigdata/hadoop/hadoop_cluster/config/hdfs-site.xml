@@ -19,7 +19,7 @@
 <configuration>
 <property>
 	<name>hadoop.home</name>
-  <value>/opt/ncdw/hadoop-2.10.0</value>
+  <value>/opt/bigdata/hadoop-2.10.0</value>
 </property>
 
 <property>

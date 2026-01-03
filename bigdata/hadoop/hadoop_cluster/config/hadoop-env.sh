@@ -22,7 +22,7 @@
 # remote nodes.
 
 # The java implementation to use.
-JAVA_HOME=/opt/ncdw/jdk1.8.0_144
+JAVA_HOME=/opt/bigdata/jdk1.8.0_144
 export JAVA_HOME=${JAVA_HOME}
 
 # The jsvc implementation to use. Jsvc is required to run secure datanodes
@@ -30,9 +30,9 @@ export JAVA_HOME=${JAVA_HOME}
 # protocol.  Jsvc is not required if SASL is configured for authentication of
 # data transfer protocol using non-privileged ports.
 #export JSVC_HOME=${JSVC_HOME}
-export HADOOP_PREFIX=/opt/ncdw/hadoop-2.10.0
+export HADOOP_PREFIX=/opt/bigdata/hadoop-2.10.0
 export HADOOP_HOME=$HADOOP_PREFIX
-export HADOOP_YARN_HOME=/opt/ncdw/hadoop-2.10.0
+export HADOOP_YARN_HOME=/opt/bigdata/hadoop-2.10.0
 
 HADOOP_CONF_DIR=$HADOOP_HOME/etc/hadoop
 export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-"/etc/hadoop"}
