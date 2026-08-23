@@ -1,0 +1,9 @@
+{
+	"nodes":[
+		{"id":"e340a1ed35afaa41","type":"text","text":"AI学习计划","x":-500,"y":-340,"width":250,"height":60},
+		{"id":"a9155a7aa8ebc7a2","type":"file","file":"mydocs/AIDesign/AI学习图.png","x":-200,"y":-200,"width":197,"height":400}
+	],
+	"edges":[
+		{"id":"4908fc136ef53bb8","fromNode":"e340a1ed35afaa41","fromSide":"bottom","toNode":"a9155a7aa8ebc7a2","toSide":"top"}
+	]
+}
