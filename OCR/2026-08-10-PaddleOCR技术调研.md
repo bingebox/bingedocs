@@ -4,7 +4,7 @@ tags: [技术, OCR, 计算机视觉, PaddleOCR]
 categories: [tech]
 ---
 
-# PaddleOCR 技术调研与测试
+# PaddleOCR 技术调研
 
 ## 1. 前言
 
@@ -547,6 +547,106 @@ if __name__ == "__main__":
 ```
 
 **核心决策**：PaddleOCR 作为 OCR 核心组件，YOLO26 + InsightFace 作为人脸检测与特征提取，各司其职，形成"检测→识别→检索→理解"的完整链路。
+
+---
+
+## 14. 生产环境并发性能优化（2080Ti 压测问题与方案）
+
+> 背景：运维在服务器上压测 PaddleOCR（2080Ti，paddlepaddle-gpu>=2.6.0 + paddleocr>=3.0.0）发现：
+> 多并发不能提升性能；脚本跑双卡，性能仍无提升。疑似服务实现问题。以下为诊断与优化方案。
+
+### 14.1 问题诊断：为什么"多并发"和"双卡"都没提速
+
+按概率排序的典型原因：
+
+1. **多个并发请求共享同一个 PaddleOCR/predictor 实例**——predictor 不是线程/协程安全的，内部锁导致串行化，并发只是排队，吞吐恒等于单请求速度（最常见原因）。
+2. **多进程用 `fork` 方式创建**——Paddle/ONNX Runtime 的 CUDA context 不能在 fork 后的子进程中使用（官方 issue #17144），子进程报错或回退 CPU。
+3. **双卡脚本没做设备隔离**——所有进程/实例默认绑 `gpu:0`，第二张卡空闲。
+4. **单实例占满 GPU 后多实例互相干扰**——官方 issue #17177 记录单实例持续推理时占满 GPU 调度，其他实例性能下降。正确姿势是"每卡一个进程"，不是"一张卡塞多个实例"。
+5. **没有 batch**——PaddleOCR 3.0 的 `predict()` 支持 `batch_size` 参数，逐张调用无法打满 GPU。
+
+**验证方法**（压测时同步执行，5 分钟定位）：
+```bash
+watch -n 0.5 nvidia-smi   # 看：GPU-Util 是否 <50%？两张卡是否只有一张在动？子进程显存是否为 0？
+```
+- GPU-Util 高但吞吐不涨 → 锁串行（原因 1）
+- 只有卡 0 在动 → 设备隔离问题（原因 3）
+- 子进程显存为 0 → fork 问题（原因 2）
+
+### 14.2 优化方案（三层，按收益排序）
+
+#### 第 1 层：单卡单进程优化（零架构改动，预期 1.5~3x）
+
+```python
+from paddleocr import PaddleOCR
+
+ocr = PaddleOCR(
+    use_doc_orientation_classify=False,   # 截图场景关掉方向分类子模型（省一次推理）
+    use_doc_unwarping=False,              # 关掉文档矫正子模型（截图不需要）
+    use_textline_orientation=True,        # 文字行方向分类保留（UI 截图有用）
+    enable_hpi=True,                      # 高性能推理：自动 TensorRT 后端 + FP16
+    device="gpu:0",
+)
+# 关键：批量推理
+results = ocr.predict([img1, img2, ..., imgN], batch_size=16)
+```
+
+- **`batch_size` 是单卡提吞吐的第一杠杆**：1080p 截图建议 16~32 起步（2080Ti 11GB，按 OOM 回退）
+- **`enable_hpi=True`**：自动转 TensorRT + FP16，2080Ti（Turing）完全支持，rec 通常再快 1.5~2x；首次运行编译 TRT 引擎需几分钟，之后缓存复用
+- **关不需要的子模块**：3.0 默认 pipeline 带方向分类、文档矫正等子模型，截图场景关掉可省 20~40% 推理量
+- 不想用 HPI 时退路：TRT 版镜像 `paddlex3.0.1-paddlepaddle3.0.0-gpu-cuda11.8-cudnn8.9-trt8.6`（或 cuda12.6 版）
+
+#### 第 2 层：并发架构——"每卡一进程 + 进程内批处理"（核心改造）
+
+正确模型不是"每请求一次推理"，而是：
+
+```
+请求队列(Redis/Kafka/进程内Queue)
+   │  攒批：凑够 N 张或等满 20ms 取一批
+   ▼
+Worker 进程 × GPU 数（每进程独占一张卡）
+   ├─ 进程启动时（fork 之后）加载模型，或 multiprocessing spawn
+   ├─ CUDA_VISIBLE_DEVICES=0 / =1 隔离设备
+   └─ 循环：取一批 → predict(batch) → 结果回队列
+```
+
+实现要点：
+1. **设备隔离**：每个 worker 启动时 `os.environ["CUDA_VISIBLE_DEVICES"] = "0"`，进程内统一 `device="gpu:0"`（双卡不提速的最可能修复点）
+2. **进程创建时机**：模型初始化必须在 fork/spawn **之后**、子进程内完成，或整体用 `mp.get_context("spawn")`
+3. **并发入口用进程不用线程**：ThreadPoolExecutor 对 Paddle 推理无效（GIL + predictor 锁）；FastAPI 场景用 `ProcessPoolExecutor(spawn)` 或独立 worker 进程 + 消息队列
+4. **worker 数量 = GPU 数量**（每卡 1 个），一卡多实例无收益（issue #17177），显存再空也不塞第二个
+5. 后处理（JSON 组装、写 OpenSearch）放 worker 外或独立线程，别占推理循环
+
+#### 第 3 层：系统级微调
+
+- **CPU 侧**：解码/resize 是 CPU 活，worker 的 `OMP_NUM_THREADS` = 核数/卡数，CPU 预处理与推理并行，避免成为瓶颈
+- **模型选型**：server 版 det/rec 若精度允许，换 **mobile 版**可快 2~3x（截图 UI 文字场景精度足够）
+- **TRT 引擎缓存**：编译产物挂持久卷，避免重启后重新编译
+- **显存规划**（2080Ti 11GB）：TRT FP16 下 det+rec 一套约 2~4GB，batch 32 的 1080p 约 4~6GB，留余量给切图二次 OCR
+
+### 14.3 压测方法与验收标准
+
+**压测脚本要求**：
+- 用真实截图集（100~500 张混合分辨率），**不要只用 2 张**（测不出 batch 和 GPU 利用率问题）
+- 指标：吞吐（张/分钟）、P50/P95 延迟、`nvidia-smi` GPU-Util 采样曲线
+- 对照组：优化前基线 / 仅第 1 层 / 第 1+2 层 / 双卡
+
+**预期提升**（1080p 中文 UI 截图，2080Ti）：
+
+| 阶段 | 预期吞吐 |
+|---|---|
+| 当前（单卡单实例逐张） | 基线 X 张/分 |
+| + batch + 关子模块 + TRT FP16 | 2.5~4x |
+| + 每卡一进程（双卡） | 再 ~2x |
+| 合计双卡 | 约 5~8x 基线 |
+
+### 14.4 最短操作清单
+
+1. `watch nvidia-smi` 观察当前压测双卡利用率 → 确认问题点
+2. 服务代码加 `batch_size`（攒批）+ 关 doc_orientation/unwarping → 单卡先测
+3. worker 改 spawn 多进程 + `CUDA_VISIBLE_DEVICES` 绑卡 → 双卡再测
+4. 确认 TensorRT 已装：`python -c "import tensorrt; print(tensorrt.__version__)"`，装了就开 `enable_hpi=True`
+5. 100 张真实图跑压测脚本出报告
 
 ---
 
