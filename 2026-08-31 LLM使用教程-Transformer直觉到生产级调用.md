@@ -4,9 +4,9 @@ tags: [技术, LLM, Transformer, API, 教程]
 categories: [tech]
 ---
 
-# LLM 使用教程：Transformer 直觉 → 采样参数 → 结构化输出 → 流式与错误处理
+# LLM 学习教程：Transformer 直觉 → 采样参数 → 结构化输出 → 流式与错误处理
 
-> 面向：会写代码、要直接调 LLM API（OpenAI 兼容协议）做工程落地的开发者。
+> 面向：Me, 每天学习一点点AI。
 > 每个知识点按"是什么 → 为什么 → 怎么用"展开，附可直接跑的示例代码。
 
 ## 1. Transformer 直觉：模型到底在干什么
