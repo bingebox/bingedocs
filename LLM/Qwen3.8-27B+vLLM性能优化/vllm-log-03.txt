@@ -1,0 +1,19 @@
+[rank0]:[W905 00:28:47.622166309 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 4521984, total: 101971460096).
+[rank0]:[W905 00:28:48.948877479 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 4521984, total: 101971460096).
+[rank0]:[W905 00:28:48.340984235 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 4521984, total: 101971460096).
+[rank0]:[W905 00:28:48.587669320 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 4521984, total: 101971460096).
+[rank0]:[W905 00:28:49.977830378 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 4521984, total: 101971460096).
+[rank0]:[W905 00:28:49.361784303 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 2424832, total: 101971460096).
+[rank0]:[W905 00:28:50.759216222 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 2424832, total: 101971460096).
+[rank0]:[W905 00:28:50.211660922 CUDACachingAllocator.cpp:508] expandable_segments: memory mapping failed with OOM on device 0 while trying to map 20971520 bytes (free: 2424832, total: 101971460096).
+----
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA RTX PRO 6000 Blac...    On  |   00000000:84:00.0 Off |                  Off |
+| 30%   51C    P1             62W /  325W |   96026MiB /  97887MiB |      0%      Default |
+|                                         |                        |                  N/A |----
+-----
+vllm运行起来了，但是发送一个：hi,  vllm直接OOM!

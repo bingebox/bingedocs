@@ -1,0 +1,24 @@
+(APIServer pid=2687) INFO:     192.168.0.130:58016 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+(APIServer pid=2687) INFO:     192.168.0.130:58042 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+(APIServer pid=2687) INFO 09-04 09:44:30 [loggers.py:310] Engine 000: Avg prompt throughput: 91.0 tokens/s, Avg generation throughput: 46.1 tokens/s, Running: 3 reqs, Waiting: 0 reqs, GPU KV cache usage: 27.7%, Prefix cache hit rate: 43.4%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO:     192.168.0.130:58016 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+(APIServer pid=2687) INFO 09-04 09:44:40 [loggers.py:310] Engine 000: Avg prompt throughput: 37.7 tokens/s, Avg generation throughput: 63.5 tokens/s, Running: 3 reqs, Waiting: 0 reqs, GPU KV cache usage: 27.7%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO:     192.168.0.130:58016 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+(APIServer pid=2687) INFO 09-04 09:44:50 [loggers.py:310] Engine 000: Avg prompt throughput: 66.8 tokens/s, Avg generation throughput: 62.7 tokens/s, Running: 3 reqs, Waiting: 0 reqs, GPU KV cache usage: 27.9%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO:     192.168.3.15:50760 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+(APIServer pid=2687) INFO 09-04 09:45:00 [loggers.py:310] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 46.6 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 26.3%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO 09-04 09:45:10 [loggers.py:310] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 44.0 tokens/s, Running: 2 reqs, Waiting: 0 reqs, GPU KV cache usage: 26.4%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO:     192.168.0.4:35259 - "POST /v1/chat/completions HTTP/1.1" 200 OK
+(APIServer pid=2687) INFO 09-04 09:45:20 [loggers.py:310] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 24.4 tokens/s, Running: 3 reqs, Waiting: 0 reqs, GPU KV cache usage: 29.8%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO:     192.168.3.15:53360 - "POST /v1/messages?beta=true HTTP/1.1" 200 OK
+(APIServer pid=2687) INFO 09-04 09:45:30 [loggers.py:310] Engine 000: Avg prompt throughput: 2398.6 tokens/s, Avg generation throughput: 31.0 tokens/s, Running: 4 reqs, Waiting: 0 reqs, GPU KV cache usage: 40.6%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO 09-04 09:45:40 [loggers.py:310] Engine 000: Avg prompt throughput: 0.0 tokens/s, Avg generation throughput: 0.9 tokens/s, Running: 4 reqs, Waiting: 0 reqs, GPU KV cache usage: 45.8%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+(APIServer pid=2687) INFO 09-04 09:45:50 [loggers.py:310] Engine 000: Avg prompt throughput: 5803.8 tokens/s, Avg generation throughput: 31.6 tokens/s, Running: 4 reqs, Waiting: 0 reqs, GPU KV cache usage: 50.4%, Prefix cache hit rate: 43.5%, MM cache hit rate: 98.3%
+---
+
+|=========================================+========================+======================|
+|   0  NVIDIA RTX PRO 6000 Blac...    Off |   00000000:84:00.0 Off |                  Off |
+| 54%   80C    P1            300W /  300W |   94292MiB /  97887MiB |    100%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+vLLM推理服务，以上日志分析，我的大模型推理性能怎么样？是正常？还是慢了？给一个优化的建议。

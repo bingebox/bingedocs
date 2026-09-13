@@ -1,0 +1,68 @@
+(EngineCore pid=28878) [10/11]  /usr/bin/nvcc --generate-dependencies-with-compile -MF /home/qwen38/.cache/flashinfer/0.6.16.post3/120f/cached_ops/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False_batch_prefill_ragged_kernel_mask_2.cuda.o.d -DPy_LIMITED_API=0x03090000 -D_GLIBCXX_USE_CXX11_ABI=1 -I/data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cccl/cub -I/data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cccl/libcudacxx/include -I/data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cccl/thrust -isystem /usr/include/python3.12 -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/csrc -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cutlass/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cutlass/tools/util/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/spdlog/include --compiler-options=-fPIC --expt-relaxed-constexpr -static-global-template-stub=false -gencode=arch=compute_120f,code=sm_120f -DFLASHINFER_ENABLE_FP8_E8M0 -DFLASHINFER_ENABLE_FP4_E2M1 -std=c++17 --threads=1 -use_fast_math -Xfatbin=-compress-all -DFLASHINFER_ENABLE_F16 -DFLASHINFER_ENABLE_BF16 -DFLASHINFER_ENABLE_FP8_E4M3 -DFLASHINFER_ENABLE_FP8_E5M2 -DNDEBUG -O3 -c /home/qwen38/.cache/flashinfer/0.6.16.post3/120f/generated/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False/batch_prefill_ragged_kernel_mask_2.cu -o /home/qwen38/.cache/flashinfer/0.6.16.post3/120f/cached_ops/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False_batch_prefill_ragged_kernel_mask_2.cuda.o 
+(EngineCore pid=28878) FAILED: [code=1] /home/qwen38/.cache/flashinfer/0.6.16.post3/120f/cached_ops/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False_batch_prefill_ragged_kernel_mask_2.cuda.o 
+(EngineCore pid=28878)  /usr/bin/nvcc --generate-dependencies-with-compile -MF /home/qwen38/.cache/flashinfer/0.6.16.post3/120f/cached_ops/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False_batch_prefill_ragged_kernel_mask_2.cuda.o.d -DPy_LIMITED_API=0x03090000 -D_GLIBCXX_USE_CXX11_ABI=1 -I/data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cccl/cub -I/data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cccl/libcudacxx/include -I/data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cccl/thrust -isystem /usr/include/python3.12 -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/tvm_ffi/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/csrc -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cutlass/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/cutlass/tools/util/include -isystem /data/qwen38/qwen38-27b/venv/lib/python3.12/site-packages/flashinfer/data/spdlog/include --compiler-options=-fPIC --expt-relaxed-constexpr -static-global-template-stub=false -gencode=arch=compute_120f,code=sm_120f -DFLASHINFER_ENABLE_FP8_E8M0 -DFLASHINFER_ENABLE_FP4_E2M1 -std=c++17 --threads=1 -use_fast_math -Xfatbin=-compress-all -DFLASHINFER_ENABLE_F16 -DFLASHINFER_ENABLE_BF16 -DFLASHINFER_ENABLE_FP8_E4M3 -DFLASHINFER_ENABLE_FP8_E5M2 -DNDEBUG -O3 -c /home/qwen38/.cache/flashinfer/0.6.16.post3/120f/generated/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False/batch_prefill_ragged_kernel_mask_2.cu -o /home/qwen38/.cache/flashinfer/0.6.16.post3/120f/cached_ops/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False/batch_prefill_with_kv_cache_dtype_q_bf16_dtype_kv_e4m3_dtype_o_bf16_dtype_idx_i32_head_dim_qk_256_head_dim_vo_256_posenc_0_use_swa_False_use_logits_cap_False_f16qk_False_batch_prefill_ragged_kernel_mask_2.cuda.o 
+(EngineCore pid=28878) <command-line>: fatal error: cuda_runtime.h: No such file or directory
+(EngineCore pid=28878) compilation terminated.
+(EngineCore pid=28878) ninja: build stopped: subcommand failed.
+(EngineCore pid=28878) 
+[rank0]:[W905 00:03:06.522603977 ProcessGroupNCCL.cpp:1624] Warning: WARNING: destroy_process_group() was not called before program exit, which can leak resources. For more info, please see https://pytorch.org/docs/stable/distributed.html#shutdown (function operator())
+(APIServer pid=28561) INFO 09-05 00:03:09 [utils.py:612] [shutdown] Process manager: send sigterm to process EngineCore
+(APIServer pid=28561) Traceback (most recent call last):
+(APIServer pid=28561)   File "<frozen runpy>", line 198, in _run_module_as_main
+(APIServer pid=28561)   File "<frozen runpy>", line 88, in _run_code
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 804, in <module>
+(APIServer pid=28561)     uvloop.run(run_server(args))
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/uvloop/__init__.py", line 96, in run
+(APIServer pid=28561)     return __asyncio.run(
+(APIServer pid=28561)            ^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/usr/lib/python3.12/asyncio/runners.py", line 194, in run
+(APIServer pid=28561)     return runner.run(main)
+(APIServer pid=28561)            ^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/usr/lib/python3.12/asyncio/runners.py", line 118, in run
+(APIServer pid=28561)     return self._loop.run_until_complete(task)
+(APIServer pid=28561)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/uvloop/__init__.py", line 48, in wrapper
+(APIServer pid=28561)     return await main
+(APIServer pid=28561)            ^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 764, in run_server
+(APIServer pid=28561)     await run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 778, in run_server_worker
+(APIServer pid=28561)     async with build_async_engine_client(
+(APIServer pid=28561)   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=28561)     return await anext(self.gen)
+(APIServer pid=28561)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 132, in build_async_engine_client
+(APIServer pid=28561)     async with build_async_engine_client_from_engine_args(
+(APIServer pid=28561)   File "/usr/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=28561)     return await anext(self.gen)
+(APIServer pid=28561)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/entrypoints/openai/api_server.py", line 168, in build_async_engine_client_from_engine_args
+(APIServer pid=28561)     async_llm = AsyncLLM.from_vllm_config(
+(APIServer pid=28561)                 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 220, in from_vllm_config
+(APIServer pid=28561)     return cls(
+(APIServer pid=28561)            ^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/v1/engine/async_llm.py", line 149, in __init__
+(APIServer pid=28561)     self.engine_core = EngineCoreClient.make_async_mp_client(
+(APIServer pid=28561)                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=28561)     return func(*args, **kwargs)
+(APIServer pid=28561)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 139, in make_async_mp_client
+(APIServer pid=28561)     return AsyncMPClient(*client_args)
+(APIServer pid=28561)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/tracing/otel.py", line 178, in sync_wrapper
+(APIServer pid=28561)     return func(*args, **kwargs)
+(APIServer pid=28561)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 987, in __init__
+(APIServer pid=28561)     super().__init__(
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/v1/engine/core_client.py", line 609, in __init__
+(APIServer pid=28561)     with launch_core_engines(
+(APIServer pid=28561)   File "/usr/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=28561)     next(self.gen)
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1194, in launch_core_engines
+(APIServer pid=28561)     wait_for_engine_startup(
+(APIServer pid=28561)   File "/home/qwen38/ai/qwen38-27b/venv/lib/python3.12/site-packages/vllm/v1/engine/utils.py", line 1253, in wait_for_engine_startup
+(APIServer pid=28561)     raise RuntimeError(
+(APIServer pid=28561) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
