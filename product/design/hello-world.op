@@ -1,0 +1,94 @@
+{
+  "version": "0.8.4",
+  "name": "OpenPencil CLI Session",
+  "children": [
+    {
+      "type": "frame",
+      "id": "n1",
+      "name": "Home",
+      "width": 390.0,
+      "height": 844.0,
+      "layout": "vertical",
+      "gap": 24.0,
+      "padding": 24.0,
+      "fill": [
+        {
+          "type": "solid",
+          "color": "#F7F1E7"
+        }
+      ],
+      "children": [
+        {
+          "type": "text",
+          "id": "n2",
+          "name": "Title",
+          "width": "fit_content",
+          "height": "fit_content",
+          "content": "Forage",
+          "fontSize": 32.0,
+          "fontWeight": 700,
+          "fill": [
+            {
+              "type": "solid",
+              "color": "#173C2B"
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "n3",
+          "name": "Subtitle",
+          "width": "fit_content",
+          "height": "fit_content",
+          "content": "Fresh picks, every week",
+          "fontSize": 16.0,
+          "fill": [
+            {
+              "type": "solid",
+              "color": "#5C6F62"
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "n4",
+          "name": "CTA",
+          "width": "fill_container",
+          "height": 48.0,
+          "layout": "horizontal",
+          "justifyContent": "center",
+          "alignItems": "center",
+          "cornerRadius": 10.0,
+          "fill": [
+            {
+              "type": "solid",
+              "color": "#2563EB"
+            }
+          ],
+          "children": [
+            {
+              "type": "text",
+              "id": "n5",
+              "name": "CTA label",
+              "width": "fit_content",
+              "height": "fit_content",
+              "content": "Browse this week's picks",
+              "fontSize": 16.0,
+              "fontWeight": 600,
+              "fill": [
+                {
+                  "type": "solid",
+                  "color": "#FFFFFF"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "editorMeta": {
+    "activePageIndex": 0,
+    "preserveAuthoredGeometry": false
+  }
+}

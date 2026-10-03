@@ -6,6 +6,8 @@ categories: [tech]
 
 # Easysearch 系统调研
 
+> 调研目的：在客户内网做系统，现在都要做信创改造，以前用Elasticsearch/OpenSearch系统，即使是开源的也不行了，取代的系统就是这个Easysearch。
+> 
 > 调研对象：INFINI Labs（极限科技）出品的 **Easysearch** —— 基于 Lucene 的国产分布式搜索引擎，
 > 定位"ES 国产替代"，兼容 ES 7.x API/DSL/SDK。重点评估其作为**截图多模态智能检索系统**检索层的
 > OpenSearch 2.19 替代/补充方案是否成立。
