@@ -383,7 +383,7 @@ categories: [tech]
 
 > Following this recap, let's discuss the model's loss function – the metric we are optimizing during the training phase to lead up to a trained and hopefully amazingly accurate model.
 
-> 回顾完训练，讨论 loss function——训练阶段优化的指标，目标是得到一个训练好、 hopefully 精度惊人的模型。
+> 回顾完训练，讨论 loss function——训练阶段持续优化的指标，优化它才能得到一个训练好、精度惊人的模型。
 
 ### The Loss Function（Loss 函数）
 
